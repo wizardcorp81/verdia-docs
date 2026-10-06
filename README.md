@@ -5,6 +5,7 @@ Plano de MVP gratuito e SDD ampliado para um CRM de biomedicina.
 ## Documentos
 
 - [Plano visual do MVP](index.html)
+- [Demo visual do app](demo.html)
 - [SDD visual completo](sdd-completo.html)
 - [Plano do MVP em Markdown](MVP-Gratuito-Verdia.md)
 - [SDD em Markdown](SDD-Verdia-CRM.md)
