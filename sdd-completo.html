@@ -1,0 +1,1306 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Verdia — SDD do CRM para biomedicina</title><meta name="description" content="Arquitetura, requisitos, fases, segurança e custos de um CRM cloud para biomedicina."><style>
+:root{--forest:#145C45;--dark:#0B3D2E;--mint:#EAF4EE;--ink:#1F2933;--line:#d9e4dd}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:#f0f4f1;color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--forest);text-underline-offset:3px}a:focus-visible,button:focus-visible{outline:3px solid #8A4B08;outline-offset:4px}
+.hero{background:var(--dark);color:white;padding:64px max(6vw,24px) 48px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:350px;height:350px;border:70px solid #ffffff09;border-radius:50%;right:-70px;top:-120px;pointer-events:none}
+.eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:#bed9ca;font-weight:700}.hero h1{font-size:clamp(42px,7vw,78px);line-height:1.02;letter-spacing:-.055em;margin:18px 0}.hero .lede{font-size:21px;max-width:820px;color:#e5f0e9;line-height:1.5}.meta{font-size:13px;color:#c3d9cc;margin-top:26px}.hero-bar{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}.pill{border:1px solid #8aa999;padding:7px 13px;border-radius:30px;font-size:13px}
+.layout{max-width:1540px;margin:0 auto;display:grid;grid-template-columns:290px minmax(0,1fr);gap:36px;padding:38px 30px 70px}aside{position:sticky;top:22px;align-self:start;max-height:calc(100vh - 44px);overflow:auto;padding:0 12px 20px 0;font-size:13px;line-height:1.5}aside h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 16px}aside ul{list-style:none;padding:0;margin:0}aside li{margin:0 0 10px}aside a{text-decoration:none;color:#405a4c}aside a:hover{color:var(--forest);text-decoration:underline}
+main{background:white;border:1px solid var(--line);border-radius:14px;padding:42px clamp(22px,4vw,64px);min-width:0;box-shadow:0 10px 40px #163e2110}main>p:first-child{margin-top:0}h2{font-size:28px;line-height:1.25;letter-spacing:-.025em;color:var(--dark);margin:60px 0 22px;padding-top:24px;border-top:2px solid var(--line)}h3{font-size:20px;color:var(--forest);line-height:1.4;margin:30px 0 12px}p{margin:0 0 17px}li{margin:8px 0}strong{color:var(--dark)}code{font: .89em ui-monospace,Consolas,monospace;background:#f0f5f2;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}pre{overflow:auto;padding:18px;background:#f0f5f2}pre code{padding:0;background:none}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.55}th{background:var(--mint);text-align:left;color:var(--dark);font-weight:700}td,th{border-bottom:1px solid var(--line);padding:12px 13px;vertical-align:top}tr:nth-child(even) td{background:#fafcfb}.table-scroll{overflow-x:auto;margin:18px 0 26px}.table-scroll table{min-width:560px}blockquote{border-left:4px solid var(--forest);margin:24px 0;padding:8px 20px;background:var(--mint)}
+.logo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:26px 0}.logo-grid figure{margin:0}.logo-grid svg{width:100%;height:auto}.logo-grid figcaption{font-size:12px;color:#486153;text-align:center;padding-top:7px}.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:25px 0 36px}.swatches span{height:54px;display:block;border-radius:8px;border:1px solid #d9e4dd}.swatches b{font-size:12px;display:block;margin-top:6px}.swatches code{font-size:10px;background:none;padding:0}
+.architecture{background:#f4f8f5;padding:24px;border:1px solid var(--line);border-radius:12px;margin:24px 0;break-inside:avoid}.arch-row{display:flex;justify-content:center;gap:12px}.arch-box{text-align:center;flex:1;max-width:550px;padding:14px 12px;border:1px solid #afc9ba;background:white;border-radius:9px;font-weight:700;color:var(--dark);line-height:1.35}.arch-box small{display:block;font-size:12px;font-weight:400;margin-top:6px}.arch-box.core{background:var(--forest);color:white;max-width:none}.arrow{text-align:center;color:var(--forest);font-size:24px;line-height:1.4}.arch-footer{text-align:center;border-top:1px solid var(--line);margin-top:22px;padding-top:16px;font-size:12px;color:#405a4c}
+.print-button{display:inline-block;background:#fff;color:var(--dark);border:0;border-radius:6px;padding:10px 16px;font:600 13px system-ui;cursor:pointer;margin-top:22px}.footer{text-align:center;padding:0 20px 40px;color:#506859;font-size:12px}
+@media(max-width:1050px){.layout{grid-template-columns:220px minmax(0,1fr);gap:20px;padding:24px 18px}.logo-grid{grid-template-columns:1fr}.logo-grid svg{max-height:210px}.swatches{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.layout{display:block;padding:18px 12px}aside{position:static;max-height:240px;background:#e4ede6;padding:18px;margin-bottom:18px;border-radius:10px}main{padding:24px 20px}h2{font-size:25px;margin-top:44px}.hero{padding:38px 24px}.hero .lede{font-size:18px}.arch-row{flex-wrap:wrap}.arch-box{flex-basis:100%}.logo-grid{grid-template-columns:1fr}.table-scroll table{min-width:520px}}
+@media print{@page{size:A4;margin:17mm 16mm}body{background:white;font-size:10pt;line-height:1.5}.hero{padding:24mm 9mm;background:white;color:var(--dark);border-bottom:3px solid var(--forest);break-after:page}.hero:after{display:none}.hero h1{font-size:58pt}.hero .lede,.meta,.eyebrow{color:var(--dark)}.pill{border-color:var(--forest)}aside,.print-button,.footer{display:none}.layout{display:block;padding:0}main{border:0;border-radius:0;box-shadow:none;padding:0}h2{font-size:19pt;break-after:avoid;margin-top:22pt;padding-top:12pt}h3{font-size:13pt;break-after:avoid}p,li{orphans:3;widows:3}.table-scroll{overflow:visible}.table-scroll table{min-width:0;font-size:8.2pt}thead{display:table-header-group}tr{break-inside:avoid}td,th{padding:7pt}.logo-grid{grid-template-columns:repeat(3,1fr);break-inside:avoid}.swatches{grid-template-columns:repeat(6,1fr)}a{color:var(--forest);overflow-wrap:anywhere}.architecture{padding:12pt}.arch-box{font-size:10pt}.arch-box small{font-size:8pt}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body><header class="hero"><div class="eyebrow">Software Design Document · v1.0</div><h1>Verdia</h1><p class="lede">CRM e gestão clínica para acompanhar o paciente,<br>organizar a rotina e preservar a história do cuidado.</p><div class="hero-bar"><span class="pill">Cloud · Responsivo</span><span class="pill">Clínicas com dados isolados</span><span class="pill">Entregas incrementais</span></div><p class="meta">05 OUT 2026 &nbsp; / &nbsp; PROPOSTA PARA VALIDAÇÃO &nbsp; / &nbsp; BRASIL</p><button class="print-button" onclick="window.print()">Imprimir / salvar como PDF</button></header><div class="layout"><aside aria-label="Sumário"><h2>Neste documento</h2><div class="toc">
+<ul>
+<li><a href="#1-decisao-executiva">1. Decisão executiva</a></li>
+<li><a href="#2-fontes-premissas-e-limites">2. Fontes, premissas e limites</a></li>
+<li><a href="#3-usuarios-e-jornadas">3. Usuários e jornadas</a></li>
+<li><a href="#4-requisitos-e-rastreabilidade">4. Requisitos e rastreabilidade</a></li>
+<li><a href="#5-modulos-e-fronteiras">5. Módulos e fronteiras</a></li>
+<li><a href="#6-modelos-de-desenvolvimento-e-decisoes-arquiteturais">6. Modelos de desenvolvimento e decisões arquiteturais</a></li>
+<li><a href="#7-arquitetura-cloud-proposta">7. Arquitetura cloud proposta</a></li>
+<li><a href="#8-modelo-de-dados">8. Modelo de dados</a></li>
+<li><a href="#9-regras-funcionais-essenciais">9. Regras funcionais essenciais</a></li>
+<li><a href="#10-contratos-de-api-e-processamento">10. Contratos de API e processamento</a></li>
+<li><a href="#11-seguranca-e-privacidade">11. Segurança e privacidade</a></li>
+<li><a href="#12-requisitos-nao-funcionais-e-operacao">12. Requisitos não funcionais e operação</a></li>
+<li><a href="#13-experiencia-responsiva-e-acessibilidade">13. Experiência responsiva e acessibilidade</a></li>
+<li><a href="#14-marca-e-identidade-visual">14. Marca e identidade visual</a></li>
+<li><a href="#15-fases-e-pequenas-entregas">15. Fases e pequenas entregas</a></li>
+<li><a href="#16-modelos-de-inteligencia-e-limites-de-automacao">16. Modelos de inteligência e limites de automação</a></li>
+<li><a href="#17-integracoes-futuras">17. Integrações futuras</a></li>
+<li><a href="#18-equipe-esforco-e-investimento-de-desenvolvimento">18. Equipe, esforço e investimento de desenvolvimento</a></li>
+<li><a href="#19-custos-recorrentes-e-premissas-de-orcamento">19. Custos recorrentes e premissas de orçamento</a></li>
+<li><a href="#20-testes-entrega-e-criterios-de-liberacao">20. Testes, entrega e critérios de liberação</a></li>
+<li><a href="#21-importacao-portabilidade-e-saida-do-servico">21. Importação, portabilidade e saída do serviço</a></li>
+<li><a href="#22-indicadores-de-sucesso-e-riscos">22. Indicadores de sucesso e riscos</a></li>
+<li><a href="#23-decisoes-a-validar-na-descoberta">23. Decisões a validar na descoberta</a></li>
+<li><a href="#24-plano-de-inicio-e-entregaveis-de-f0">24. Plano de início e entregáveis de F0</a></li>
+<li><a href="#25-referencias-e-natureza-das-estimativas">25. Referências e natureza das estimativas</a></li>
+</ul>
+</div>
+</aside><main><div class="current-plan" style="background:#EAF4EE;border-left:5px solid #145C45;padding:18px 22px;margin-bottom:28px"><strong>Atualização v1.1 — MVP com ferramentas gratuitas.</strong><p>O plano vigente começa com Cloudflare e Supabase. A arquitetura e os custos ampliados deste SDD são referência de evolução, não o orçamento selecionado para começar.</p><a href="index.html">Abrir plano vigente do MVP →</a></div><h1 id="verdia-crm-e-gestao-clinica">Verdia — CRM e gestão clínica</h1>
+<p><strong>Software Design Document · Versão 1.0 · 5 de outubro de 2026</strong></p>
+<p><strong>Status:</strong> proposta técnica para validação de produto e planejamento de desenvolvimento. <strong>Mercado inicial:</strong> Brasil. <strong>Nome provisório:</strong> Verdia. <strong>Responsáveis a designar:</strong> proprietário do produto, líder técnico e responsável clínico. Este documento especifica o sistema; não representa um sistema já implementado, uma cotação comercial ou certificação de conformidade.</p>
+<h2 id="1-decisao-executiva">1. Decisão executiva</h2>
+<p>Desenvolver uma plataforma SaaS em nuvem para profissionais e clínicas de saúde, começando por biomedicina estética. O produto deve organizar o relacionamento com o paciente desde o cadastro e agendamento até o atendimento, retorno e acompanhamento. O núcleo é um CRM associado a um prontuário, com separação clara entre informações administrativas, clínicas e comerciais.</p>
+<p>A arquitetura recomendada é um <strong>monólito modular</strong>, com aplicação web responsiva, API, banco PostgreSQL gerenciado, armazenamento privado de documentos e processamento assíncrono. Um mesmo produto atende várias clínicas, preservando o isolamento de dados. Essa estrutura permite pequenas entregas sem assumir, no início, o custo operacional de microsserviços.</p>
+<p><strong>Primeiro marco de valor:</strong> cadastro de pacientes, agenda e retornos em 6–8 semanas. <strong>MVP clínico:</strong> adicionar anamnese, histórico, finalização de registros e exportação em 10–14 semanas acumuladas. <strong>Versão operacional ampliada:</strong> fotos, financeiro e estoque em 23–32 semanas acumuladas. Os prazos são hipóteses para a equipe descrita na seção 18 e precisam ser recalibrados após a descoberta.</p>
+<p>Segurança, isolamento, auditoria e restauração de backups são requisitos desde a primeira versão com dados reais. Funções que sugerem condutas ou interpretam imagens clinicamente ficam em uma trilha posterior, condicionada à avaliação técnica, clínica e regulatória.</p>
+<h2 id="2-fontes-premissas-e-limites">2. Fontes, premissas e limites</h2>
+<h3 id="21-origem-dos-requisitos">2.1 Origem dos requisitos</h3>
+<p>Foram usados o pedido desta conversa e a transcrição disponível no chat <strong>“Transcrição de fotos”</strong>. A transcrição contém três fotos de anotações. Nesta elaboração, foi lido o texto transcrito; as palavras marcadas como ilegíveis não foram reconstruídas nem confirmadas nos manuscritos.</p>
+<p>Classificação usada neste SDD: <strong>U</strong> = solicitado nesta conversa; <strong>T</strong> = presente na transcrição; <strong>P</strong> = proposta de arquitetura ou evolução. A transcrição é insumo de descoberta, não especificação clínica validada.</p>
+<h3 id="22-premissas-de-dimensionamento">2.2 Premissas de dimensionamento</h3>
+<ul>
+<li>Produto comercial para múltiplas clínicas; uma clínica também pode ser um profissional autônomo. Cada organização constitui um tenant, isto é, uma fronteira de dados e permissões.</li>
+<li>Piloto: 3–5 clínicas, até 25 usuários internos, 10 mil pacientes no total, 2 mil agendamentos/mês e 50 GB de anexos.</li>
+<li>Primeiro patamar comercial: até 50 clínicas, 250 usuários internos, 100 mil pacientes, 20 mil agendamentos/mês e 500 GB de anexos.</li>
+<li>Planejamento inicial em português brasileiro, moeda BRL e fusos IANA configuráveis por unidade. Armazenamento de instantes em UTC.</li>
+<li>Uso conectado à internet. A primeira versão não promete prontuário offline; rede indisponível deve ser sinalizada sem exibir uma falsa confirmação de salvamento.</li>
+<li>Os volumes são hipóteses de engenharia. Não são limites garantidos antes de testes de carga.</li>
+</ul>
+<h3 id="23-fora-do-mvp">2.3 Fora do MVP</h3>
+<p>Aplicativos nativos, marketplace com compra automática, contabilidade fiscal completa, telemedicina, prescrição automatizada, interpretação diagnóstica de fotos, recomendações de doses ou planos anatômicos, recomendação automática de exames e integração com operadoras. Esses itens têm complexidade ou dependências que não devem atrasar a organização básica da clínica.</p>
+<h2 id="3-usuarios-e-jornadas">3. Usuários e jornadas</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Perfil</th>
+<th>Necessidade principal</th>
+<th>Limite de acesso padrão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Profissional assistencial</td>
+<td>Atender, registrar, consultar evolução e organizar retorno</td>
+<td>Pacientes sob sua responsabilidade ou compartilhados formalmente na clínica</td>
+</tr>
+<tr>
+<td>Recepção</td>
+<td>Cadastrar, agendar, confirmar presença e acompanhar retornos</td>
+<td>Dados administrativos; sem anamnese, imagens ou evolução clínica</td>
+</tr>
+<tr>
+<td>Gestor da clínica</td>
+<td>Acompanhar operação, equipe, custos e receita</td>
+<td>Indicadores e gestão; acesso clínico não é concedido apenas por ser proprietário</td>
+</tr>
+<tr>
+<td>Financeiro</td>
+<td>Contas a pagar/receber e conciliação</td>
+<td>Valores e referências necessárias; sem conteúdo clínico</td>
+</tr>
+<tr>
+<td>Estoquista/compras</td>
+<td>Lotes, validade, movimentos e fornecedores</td>
+<td>Estoque e compras; sem prontuário</td>
+</tr>
+<tr>
+<td>Paciente/responsável</td>
+<td>Preencher ficha e consultar orientações autorizadas</td>
+<td>Apenas seus documentos e processos, em portal futuro</td>
+</tr>
+<tr>
+<td>Suporte do SaaS</td>
+<td>Resolver problemas operacionais</td>
+<td>Metadados técnicos; acesso excepcional temporário e auditado</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Jornada principal:</strong> cadastrar paciente → verificar dados e preferências → agendar → confirmar → preencher anamnese → atendimento → finalizar evolução → registrar retorno → acompanhar situação → concluir acompanhamento.</p>
+<p><strong>Jornada de retorno:</strong> profissional define prazo ou data individualmente → sistema cria tarefa vinculada ao atendimento → recepção contata ou envia mensagem aprovada → paciente agenda → tarefa é concluída pelo evento correspondente. Uma tarefa de retorno não reserva horário automaticamente.</p>
+<p><strong>Jornada de pós-procedimento:</strong> profissional seleciona orientações e cronograma revisados → sistema cria tarefas e lembretes → respostas entram em fila de atendimento humano → equipe registra avaliação. Mensagens não equivalem a monitoramento de emergência.</p>
+<h2 id="4-requisitos-e-rastreabilidade">4. Requisitos e rastreabilidade</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Origem</th>
+<th>Requisito e interpretação</th>
+<th>Entrega</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RF01</td>
+<td>U/T</td>
+<td>Cadastro e busca de pacientes, responsáveis e contatos; alerta de possível duplicidade</td>
+<td>F1</td>
+</tr>
+<tr>
+<td>RF02</td>
+<td>U</td>
+<td>Agenda por profissional, unidade e sala; bloqueios, cancelamentos, faltas e reagendamento</td>
+<td>F2</td>
+</tr>
+<tr>
+<td>RF03</td>
+<td>U/T</td>
+<td>Lista de retornos com responsável, prazo, situação e histórico de contato</td>
+<td>F2</td>
+</tr>
+<tr>
+<td>RF04</td>
+<td>U/T</td>
+<td>Anamnese versionada, atendimentos, evolução e histórico longitudinal</td>
+<td>F3</td>
+</tr>
+<tr>
+<td>RF05</td>
+<td>T</td>
+<td>Fotos antes/depois com datas e visualização comparativa; interpretação por IA é outro requisito</td>
+<td>F4; IA em F8</td>
+</tr>
+<tr>
+<td>RF06</td>
+<td>T</td>
+<td>Voz e documentos geram rascunhos revisáveis de prontuário ou documento próprio</td>
+<td>F8</td>
+</tr>
+<tr>
+<td>RF07</td>
+<td>T</td>
+<td>Cronogramas, modelos de orientação e acompanhamento pós-procedimento</td>
+<td>F4</td>
+</tr>
+<tr>
+<td>RF08</td>
+<td>T</td>
+<td>Contas, pagamentos, vencimentos e fluxo de caixa por período e procedimento</td>
+<td>F5</td>
+</tr>
+<tr>
+<td>RF09</td>
+<td>T</td>
+<td>Cadastro e reconhecimento assistido de produtos; entradas, saídas, lotes e validade</td>
+<td>F6; OCR em F8</td>
+</tr>
+<tr>
+<td>RF10</td>
+<td>T</td>
+<td>Leitura de notas fiscais: XML quando disponível; OCR para imagem/PDF, com conferência</td>
+<td>F6 manual/XML; F8 OCR</td>
+</tr>
+<tr>
+<td>RF11</td>
+<td>T</td>
+<td>Cadastro de fornecedores, cotações e comparação de custo total</td>
+<td>F6/F7</td>
+</tr>
+<tr>
+<td>RF12</td>
+<td>T</td>
+<td>Congressos, referências, técnicas e vídeos: biblioteca editorial com fontes e revisão</td>
+<td>F7</td>
+</tr>
+<tr>
+<td>RF13</td>
+<td>T</td>
+<td>Gráficos de resultados laboratoriais com unidade e referência da origem; sugestões clínicas separadas</td>
+<td>F8</td>
+</tr>
+<tr>
+<td>RF14</td>
+<td>T</td>
+<td>Projeções financeiras mensais/anuais por procedimento, com hipóteses visíveis</td>
+<td>F5 básico; F8 estatístico</td>
+</tr>
+<tr>
+<td>RF15</td>
+<td>U</td>
+<td>Cloud, responsividade e segurança</td>
+<td>Todas</td>
+</tr>
+<tr>
+<td>RF16</td>
+<td>P</td>
+<td>Exportação, auditoria, consentimentos, isolamento de clínicas e portabilidade</td>
+<td>F0–F3</td>
+</tr>
+<tr>
+<td>RF17</td>
+<td>P</td>
+<td>Portal do paciente e integrações externas</td>
+<td>F7</td>
+</tr>
+<tr>
+<td>RF18</td>
+<td>P</td>
+<td>Assinatura comercial, limites por plano e medição de consumo do SaaS</td>
+<td>F7</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Pendências da transcrição:</strong> os trechos “estímulos de acordo c/ o posto dele…”, “por quantos [ilegível]”, o verbo relacionado a “documento próprio” e “vídeos pós-[ilegível]” precisam de esclarecimento. Não se presume que “leitura de foto” signifique diagnóstico, nem que “contabilidade” implique escrituração fiscal. Para planejamento, foram separados comparação visual, gestão financeira e hipóteses futuras de inteligência.</p>
+<h2 id="5-modulos-e-fronteiras">5. Módulos e fronteiras</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Responsabilidade</th>
+<th>Interfaces principais</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identidade e organizações</td>
+<td>Usuários, vínculos, papéis, unidades, sessões</td>
+<td>Autorização para todos os módulos</td>
+</tr>
+<tr>
+<td>Pacientes e relacionamento</td>
+<td>Identificação, responsáveis, contatos, preferências</td>
+<td>Agenda e prontuário referenciam o paciente</td>
+</tr>
+<tr>
+<td>Agenda e retornos</td>
+<td>Disponibilidade, reservas, tarefas e lembretes</td>
+<td>Emite eventos de agendamento e cancelamento</td>
+</tr>
+<tr>
+<td>Prontuário</td>
+<td>Anamnese, atendimentos, evolução, documentos finalizados</td>
+<td>Consome referências de paciente, procedimento e anexos</td>
+</tr>
+<tr>
+<td>Mídia e documentos</td>
+<td>Upload, quarentena, armazenamento e acesso</td>
+<td>Entrega arquivos somente após autorização</td>
+</tr>
+<tr>
+<td>Acompanhamento</td>
+<td>Planos revisados, tarefas e respostas</td>
+<td>Integra agenda, atendimento e comunicação</td>
+</tr>
+<tr>
+<td>Financeiro</td>
+<td>Recebíveis, despesas, parcelas, pagamentos e estornos</td>
+<td>Vincula procedimento sem copiar narrativa clínica</td>
+</tr>
+<tr>
+<td>Estoque e compras</td>
+<td>Produtos, lotes, movimentos, cotações e fornecedores</td>
+<td>Consumo vinculado ao atendimento e lançamento financeiro</td>
+</tr>
+<tr>
+<td>Comunicação</td>
+<td>Preferências, modelos, envio, retorno e falhas</td>
+<td>Adaptadores para e-mail, WhatsApp e SMS</td>
+</tr>
+<tr>
+<td>Inteligência assistida</td>
+<td>Transcrição, extração e rascunhos</td>
+<td>Nunca finaliza prontuários ou executa condutas autonomamente</td>
+</tr>
+<tr>
+<td>Plataforma</td>
+<td>Auditoria, cobrança SaaS, exportação, limites e operação</td>
+<td>Serviços internos e painel restrito</td>
+</tr>
+</tbody>
+</table></div>
+<p>Cada módulo mantém suas regras e serviços de aplicação. A escrita em tabelas de outro módulo ocorre pela interface desse módulo, mesmo compartilhando o banco. Relatórios usam consultas controladas ou projeções; não contornam permissões.</p>
+<h2 id="6-modelos-de-desenvolvimento-e-decisoes-arquiteturais">6. Modelos de desenvolvimento e decisões arquiteturais</h2>
+<h3 id="61-abordagem-de-trabalho">6.1 Abordagem de trabalho</h3>
+<p>Aplicar descoberta orientada a jornadas, priorização MoSCoW e entregas verticais: cada incremento inclui interface, regra, persistência, autorização e verificação. Usar ciclos de duas semanas, demonstração com um profissional e revisão do backlog. Histórias seguem critérios verificáveis no formato “dado/quando/então”.</p>
+<p>Aplicar DDD de forma leve para separar domínios; arquitetura em camadas para domínio, casos de uso e infraestrutura; modelo C4 para diagramas; registros ADR para decisões; threat modeling para riscos; DevSecOps para integrar segurança ao fluxo de entrega. Não é necessário implementar todos os padrões de DDD em cada cadastro.</p>
+<h3 id="62-adrs-iniciais">6.2 ADRs iniciais</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Escolha</th>
+<th>Motivo e condição de revisão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADR01</td>
+<td>Monólito modular + worker</td>
+<td>Simplifica transações e implantação. Extrair serviço quando carga ou equipes independentes justificarem</td>
+</tr>
+<tr>
+<td>ADR02</td>
+<td>PostgreSQL relacional</td>
+<td>Relações e integridade fortes; JSONB só para formulários flexíveis e snapshots</td>
+</tr>
+<tr>
+<td>ADR03</td>
+<td>Banco compartilhado com tenant_id e RLS</td>
+<td>Custo inicial adequado. Banco dedicado será opção futura para contratos com isolamento adicional</td>
+</tr>
+<tr>
+<td>ADR04</td>
+<td>Web responsiva/PWA</td>
+<td>Uma base para celular, tablet e PC. Aplicativo nativo somente por necessidade comprovada</td>
+</tr>
+<tr>
+<td>ADR05</td>
+<td>AWS, região São Paulo para dados centrais</td>
+<td>Facilita governança de localização; não elimina análise de transferências de terceiros</td>
+</tr>
+<tr>
+<td>ADR06</td>
+<td>Identidade gerenciada via OIDC</td>
+<td>Reduz construção de autenticação própria; autorização continua na aplicação</td>
+</tr>
+<tr>
+<td>ADR07</td>
+<td>Outbox transacional + fila</td>
+<td>Evita perder lembretes após gravação e permite tentativas seguras</td>
+</tr>
+<tr>
+<td>ADR08</td>
+<td>Prontuário finalizado imutável</td>
+<td>Retificação por adendo preserva autoria e evolução</td>
+</tr>
+<tr>
+<td>ADR09</td>
+<td>IA desacoplada por adaptador</td>
+<td>Permite comparar fornecedores, limitar custos e bloquear funcionalidades sem afetar o CRM</td>
+</tr>
+</tbody>
+</table></div>
+<p>Não adotar Kubernetes, Kafka, banco vetorial separado ou event sourcing geral no início. Histórico clínico e movimentos financeiros/estoque precisam de rastreabilidade, mas isso não exige reconstruir todo o sistema por eventos.</p>
+<h2 id="7-arquitetura-cloud-proposta">7. Arquitetura cloud proposta</h2>
+<h3 id="71-fluxo-logico">7.1 Fluxo lógico</h3>
+<div class="architecture" role="img" aria-label="Arquitetura: dispositivos acessam proteção e balanceador, depois web e API, com banco, arquivos e fila privados e controles transversais.">
+<div class="arch-row"><div class="arch-box">PC · Tablet · Smartphone<small>Interface responsiva / HTTPS</small></div></div><div class="arrow">↓</div>
+<div class="arch-row"><div class="arch-box">DNS · WAF · Balanceador<small>Entrada protegida e distribuição</small></div></div><div class="arrow">↓</div>
+<div class="arch-row"><div class="arch-box">Web / BFF<small>Next.js · sessão segura</small></div><div class="arch-box">Identidade<small>OIDC · MFA</small></div></div><div class="arrow">↓</div>
+<div class="arch-row"><div class="arch-box core">API modular<small>Pacientes · Agenda · Prontuário · Gestão</small></div></div><div class="arrow">↓</div>
+<div class="arch-row"><div class="arch-box">PostgreSQL<small>Dados + isolamento</small></div><div class="arch-box">S3 privado<small>Fotos + documentos</small></div><div class="arch-box">Outbox → SQS<small>Worker + integrações</small></div></div>
+<div class="arch-footer">Criptografia · Auditoria · Métricas · Backups · Permissões</div></div>
+<h3 id="72-implantacao">7.2 Implantação</h3>
+<p>Contas ou ambientes isolados para desenvolvimento, homologação e produção. Dados de teste sintéticos. Infraestrutura declarada como código, com redes públicas para o balanceador e privadas para aplicação e banco. Em produção comercial, serviços web/API distribuídos em duas zonas, com pelo menos duas réplicas de cada serviço que atende requisições; worker escalável pela idade da fila. Banco RDS Multi-AZ antes de oferecer o nível comercial de disponibilidade.</p>
+<p>Para o piloto, usar recursos menores e, se aprovado no marco técnico, banco Single-AZ com backups e indisponibilidade planejada explícita. Isso reduz custo, mas não tem a mesma resiliência do desenho comercial. Nenhum ambiente pode expor o banco à internet.</p>
+<p>S3 privado recebe uploads por autorização temporária. Arquivos novos ficam em quarentena até validação de tipo, tamanho e varredura. Acesso a originais e versões depende do prontuário e da organização. Recursos estáticos podem usar CDN; respostas clínicas usam <code>Cache-Control: no-store</code> e ficam fora de caches compartilhados.</p>
+<p>Egress por NAT ou endpoints privados conforme serviço; evitar um NAT único como dependência de produção entre zonas. Decidir o conjunto de endpoints com uma estimativa de custo: endpoints também podem gerar cobrança. Segredos no Secrets Manager, chaves gerenciadas por KMS, certificados TLS e acesso administrativo com MFA e funções temporárias.</p>
+<h3 id="73-ferramentas-de-implementacao">7.3 Ferramentas de implementação</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Ferramenta proposta</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interface</td>
+<td>TypeScript, React e Next.js</td>
+<td>Layout responsivo, formulários e BFF de sessão</td>
+</tr>
+<tr>
+<td>Design system</td>
+<td>CSS tokens, componentes acessíveis e Storybook</td>
+<td>Consistência de telas e estados</td>
+</tr>
+<tr>
+<td>API</td>
+<td>TypeScript, NestJS, OpenAPI</td>
+<td>Casos de uso, validação e contratos documentados</td>
+</tr>
+<tr>
+<td>Dados</td>
+<td>PostgreSQL; Prisma para acesso e migrações</td>
+<td>SQL específico para RLS, constraints e concorrência</td>
+</tr>
+<tr>
+<td>Identidade</td>
+<td>Amazon Cognito via OIDC</td>
+<td>MFA, recuperação e ciclo de credenciais</td>
+</tr>
+<tr>
+<td>Execução</td>
+<td>Docker, ECS Fargate e ECR</td>
+<td>Web, API e tarefas assíncronas</td>
+</tr>
+<tr>
+<td>Fila</td>
+<td>SQS + fila de falhas; agendador periódico</td>
+<td>Lembretes, exportação, OCR e integrações</td>
+</tr>
+<tr>
+<td>Arquivos</td>
+<td>S3, KMS e scanner de malware</td>
+<td>Fotos, documentos e artefatos de exportação</td>
+</tr>
+<tr>
+<td>Observabilidade</td>
+<td>OpenTelemetry e CloudWatch</td>
+<td>Métricas, logs sanitizados e rastreamento</td>
+</tr>
+<tr>
+<td>Desenvolvimento</td>
+<td>Git, GitHub, Actions, editor e gestor de issues</td>
+<td>Revisão, automação e rastreabilidade</td>
+</tr>
+<tr>
+<td>Infraestrutura</td>
+<td>OpenTofu ou Terraform, escolha registrada em ADR</td>
+<td>Ambientes reproduzíveis e revisão de mudanças</td>
+</tr>
+<tr>
+<td>Qualidade</td>
+<td>Vitest/Jest, Playwright, axe-core e k6</td>
+<td>Regras, jornadas, acessibilidade e desempenho</td>
+</tr>
+<tr>
+<td>Segurança</td>
+<td>Scanner de dependências, segredos, imagens e OWASP ZAP</td>
+<td>Detecção contínua e teste dinâmico</td>
+</tr>
+<tr>
+<td>Design</td>
+<td>Figma ou Penpot</td>
+<td>Protótipos, validação e documentação de componentes</td>
+</tr>
+</tbody>
+</table></div>
+<p>Fixar versões estáveis suportadas no início da implementação, com lockfiles e rotina de atualização. A escolha não depende de uma versão “mais recente” imutável. Next.js admite diferentes formas de implantação; NestJS oferece módulos para organizar responsabilidades. Fontes: <a href="https://nextjs.org/docs/app/getting-started/deploying">Next.js</a> e <a href="https://docs.nestjs.com/modules">NestJS</a>.</p>
+<h2 id="8-modelo-de-dados">8. Modelo de dados</h2>
+<h3 id="81-entidades-principais">8.1 Entidades principais</h3>
+<p>Todas as entidades de negócio têm UUID, tenant_id, timestamps e autoria quando aplicável. Tabelas globais de identidade e catálogos explicitamente públicos são exceções documentadas.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Entidade</th>
+<th>Campos essenciais e relações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organization / Unit</td>
+<td>Nome, situação, fuso, configurações; organização 1:N unidades</td>
+</tr>
+<tr>
+<td>User / Membership</td>
+<td>Identidade externa; usuário N:N organizações por vínculo e papéis</td>
+</tr>
+<tr>
+<td>Professional</td>
+<td>Vínculo, conselho/registro, habilitações declaradas e unidades</td>
+</tr>
+<tr>
+<td>Patient / Guardian</td>
+<td>Nome, nascimento, contatos; CPF opcional; responsável e relação</td>
+</tr>
+<tr>
+<td>CareTeamAssignment</td>
+<td>Paciente, profissional/equipe, vigência e motivo do acesso</td>
+</tr>
+<tr>
+<td>ContactPreference / Consent</td>
+<td>Finalidade, canal, documento/versão, evidência, coleta e revogação</td>
+</tr>
+<tr>
+<td>ProcedureCatalog</td>
+<td>Nome, duração sugerida, preço de referência, versão e situação</td>
+</tr>
+<tr>
+<td>Appointment / Reservation</td>
+<td>Paciente, unidade, profissional, recurso, início/fim e situação</td>
+</tr>
+<tr>
+<td>ReturnTask</td>
+<td>Paciente, atendimento de origem, prazo, responsável e conclusão</td>
+</tr>
+<tr>
+<td>Encounter</td>
+<td>Paciente, profissional, agendamento opcional e situação</td>
+</tr>
+<tr>
+<td>FormTemplateVersion / FormResponse</td>
+<td>Esquema versionado, respostas JSONB e referência imutável à versão</td>
+</tr>
+<tr>
+<td>ClinicalEntry / Addendum</td>
+<td>Conteúdo, autor, instante, versão, finalização, hash e referência original</td>
+</tr>
+<tr>
+<td>ProcedureExecution</td>
+<td>Atendimento, procedimento, região registrada, produto/lote e quantidade informada</td>
+</tr>
+<tr>
+<td>Attachment / Photo</td>
+<td>Chave privada, checksum, MIME, tamanho, status de varredura, captura e finalidade</td>
+</tr>
+<tr>
+<td>FollowUpPlan / Task</td>
+<td>Modelo/versão, paciente, agenda, responsável e respostas</td>
+</tr>
+<tr>
+<td>Receivable / Payable / Payment</td>
+<td>Competência, vencimento, centavos, moeda, parcelas e conciliações</td>
+</tr>
+<tr>
+<td>Product / Batch / StockMovement</td>
+<td>Unidade de medida, lote, validade, entrada/saída, custo e referência</td>
+</tr>
+<tr>
+<td>Supplier / Quotation / Purchase</td>
+<td>Identificação, itens, frete, prazo e estado de aprovação</td>
+</tr>
+<tr>
+<td>InvoiceImport</td>
+<td>Documento original, chave quando houver, resultado extraído e conferência</td>
+</tr>
+<tr>
+<td>Notification / IntegrationEvent</td>
+<td>Destino mínimo, template, chave idempotente e estado externo</td>
+</tr>
+<tr>
+<td>AuditEvent / OutboxEvent</td>
+<td>Ator, recurso, ação, resultado, timestamp e identificador de correlação</td>
+</tr>
+<tr>
+<td>Subscription / Usage</td>
+<td>Plano SaaS, franquias, período e consumo; distinto do financeiro da clínica</td>
+</tr>
+<tr>
+<td>AIJob</td>
+<td>Tipo, versão de modelo/prompt, referências, custo, resultado e revisão humana</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Relações centrais:</strong> organização → pacientes → atendimentos → registros e anexos. Agenda referencia paciente e recursos. Atendimento pode originar retorno, consumo de estoque e recebível. Um pagamento liquida total ou parcialmente um recebível; não cria receita duplicada. Um produto tem vários lotes, cada um com movimentos imutáveis.</p>
+<h3 id="82-integridade-e-concorrencia">8.2 Integridade e concorrência</h3>
+<ul>
+<li>Chaves estrangeiras compostas por tenant_id e id impedem relacionar um atendimento de uma clínica a um paciente de outra.</li>
+<li>Índices iniciam por tenant_id nos caminhos comuns: paciente/nome, agenda/profissional/período, retorno/status/prazo, atendimento/paciente/data e lote/produto/validade.</li>
+<li>CPF não será chave primária e não será obrigatório para cadastrar. Duplicidade por nome, nascimento e contato exige conferência humana; fusão preserva referências e auditoria.</li>
+<li>Agenda usa reservas de intervalos com constraint de exclusão para recursos ocupados e estados ativos. Reagendamento libera e reserva dentro de uma transação. Testar dois usuários disputando o mesmo horário.</li>
+<li>Edições usam versão otimista (<code>version</code>/ETag); conflito gera resposta 409 e comparação. Não adotar “última gravação vence” em registros clínicos.</li>
+<li>Valores financeiros em centavos ou decimal exato; quantidades de estoque em decimal com unidade explícita. Nunca usar ponto flutuante para dinheiro.</li>
+<li>Estoque é calculado por movimentos, com controle transacional para impedir saída indevida e estornos vinculados ao movimento original.</li>
+<li>Finalização do prontuário grava snapshot, autoria e evidência de integridade. Correções posteriores são adendos. Hash isolado não equivale a assinatura digital juridicamente qualificada.</li>
+</ul>
+<h3 id="83-isolamento-de-clinicas">8.3 Isolamento de clínicas</h3>
+<p>O backend obtém o tenant do vínculo autenticado, nunca confia apenas no tenant_id enviado pelo navegador. A política RLS deve cobrir leitura e escrita, com <code>USING</code> e <code>WITH CHECK</code>. A função de conexão da aplicação não pode ser proprietária das tabelas, superusuária ou possuir BYPASSRLS; migrações usam credencial separada. Empregar FORCE RLS onde aplicável e contexto de tenant local à transação, evitando vazamento entre conexões do pool.</p>
+<p>A mesma fronteira vale para arquivos, filas, caches, exportações e busca. Jobs revalidam organização e autorização na execução. A documentação do PostgreSQL registra exceções de RLS para proprietários e papéis privilegiados; por isso a configuração de papéis faz parte dos testes de segurança. <a href="https://www.postgresql.org/docs/17/ddl-rowsecurity.html">PostgreSQL — Row Security</a>.</p>
+<h2 id="9-regras-funcionais-essenciais">9. Regras funcionais essenciais</h2>
+<h3 id="91-agenda-e-retornos">9.1 Agenda e retornos</h3>
+<p>Situações: agendado → confirmado → em atendimento → concluído; cancelado e falta são estados terminais alternativos. Reagendamento mantém o histórico. Conclusão administrativa do horário não finaliza automaticamente o conteúdo clínico.</p>
+<p>Considerar duração, intervalo de preparação, horário de funcionamento e bloqueios por profissional e sala. Sobrerreserva, se adotada futuramente, exige permissão e justificativa. Retornos têm estados pendente, contatado, agendado, concluído e dispensado com motivo. Cancelamento do retorno reabre a tarefa quando necessário.</p>
+<h3 id="92-anamnese-e-prontuario">9.2 Anamnese e prontuário</h3>
+<p>Templates por área/procedimento, revisados pelo responsável clínico. Campos tipados, condicionais e obrigatórios conforme template; distinguir “não”, “não informado” e “não se aplica”. Registrar mudanças de alergias e outras informações relevantes sem apagar histórico.</p>
+<p>Permitir rascunho com salvamento no servidor, indicador de última gravação e recuperação após reconexão. Finalização é ato explícito do profissional e exige revisão. Modelos novos não alteram fichas antigas. Importações e transcrições identificam sua origem. Permitir exportação legível com datas, autores, adendos e anexos autorizados.</p>
+<h3 id="93-fotos-e-documentos">9.3 Fotos e documentos</h3>
+<p>Registrar data de captura e upload separadamente, região corporal, contexto e vínculo ao atendimento. Preservar original e derivadas; remover geolocalização de cópias de exibição quando desnecessária. Não aplicar filtros de embelezamento à evidência clínica. Comparação lado a lado e alinhamento manual devem informar diferenças de iluminação/posição.</p>
+<p>Uso assistencial e divulgação de imagem são finalidades distintas. O acesso clínico não autoriza publicação comercial. Exportação ou compartilhamento gera auditoria. Downloads temporários usam links curtos, revogáveis e escopo mínimo; não enviar arquivos clínicos como anexos automáticos em canais de mensagem.</p>
+<h3 id="94-financeiro-e-estoque">9.4 Financeiro e estoque</h3>
+<p>Separar receita prevista, faturamento e caixa recebido. Relatórios por procedimento devem expor regra de rateio quando houver pacote, desconto ou parcelamento. Pagamentos parciais, inadimplência, estornos e cancelamentos mantêm rastreabilidade.</p>
+<p>Estoque registra lote e validade, perdas, devoluções e ajustes justificados. Bloquear uso de lote vencido/quarentenado e mostrar vínculo lote → atendimentos para rastreio. Conversões entre embalagem, volume e unidades de aplicação precisam de configuração revisada; o sistema não deduz equivalência clínica entre produtos.</p>
+<p>Importação XML/OCR de nota gera uma conferência antes de movimentar estoque e financeiro. Não confundir reconhecimento de documento com emissão fiscal ou validação tributária. Comparar fornecedores pelo custo total, prazo, validade e procedência documentada; a compra exige decisão humana.</p>
+<h2 id="10-contratos-de-api-e-processamento">10. Contratos de API e processamento</h2>
+<p>API REST versionada em <code>/v1</code>, com OpenAPI gerada, validação no servidor e paginação por cursor nas listas extensas. Erros padronizados incluem código, mensagem segura e correlation_id, sem conteúdo clínico em logs. Autenticação por sessão de servidor no BFF; cookies Secure, HttpOnly e SameSite, proteção CSRF e verificação de origem. Tokens de acesso não ficam em localStorage.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Operação</th>
+<th>Contrato resumido</th>
+<th>Controle decisivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST /v1/patients</td>
+<td>Cria paciente com campos mínimos</td>
+<td>Papel, tenant e alerta de duplicidade</td>
+</tr>
+<tr>
+<td>POST /v1/appointments</td>
+<td>Reserva período e recursos</td>
+<td>Transação, idempotência e conflito 409</td>
+</tr>
+<tr>
+<td>PATCH /v1/appointments/{id}</td>
+<td>Atualiza ou reagenda</td>
+<td>If-Match/version e histórico</td>
+</tr>
+<tr>
+<td>POST /v1/encounters</td>
+<td>Abre atendimento</td>
+<td>Vínculo assistencial e profissional</td>
+</tr>
+<tr>
+<td>POST /v1/clinical-entries/{id}/finalize</td>
+<td>Finaliza uma versão revisada</td>
+<td>Autoria, permissão e versão atual</td>
+</tr>
+<tr>
+<td>POST /v1/clinical-entries/{id}/addenda</td>
+<td>Acrescenta retificação</td>
+<td>Original permanece íntegro</td>
+</tr>
+<tr>
+<td>POST /v1/attachments/upload-intents</td>
+<td>Autoriza upload restrito</td>
+<td>MIME, tamanho, finalidade e expiração</td>
+</tr>
+<tr>
+<td>POST /v1/exports</td>
+<td>Cria job de exportação</td>
+<td>Reautenticação quando sensível e auditoria</td>
+</tr>
+<tr>
+<td>POST /v1/webhooks/{provider}</td>
+<td>Recebe evento de integração</td>
+<td>Assinatura, anti-replay e deduplicação</td>
+</tr>
+</tbody>
+</table></div>
+<p>Um comando grava a alteração e um evento outbox na mesma transação. O publicador envia à fila; o consumidor tolera entregas repetidas. Usar chave idempotente por organização/operação e unicidade do evento externo. Não prometer execução “exatamente uma vez”.</p>
+<p>Lembretes são tarefas persistidas no banco, selecionadas periodicamente pelo vencimento. Antes do envio, revalidar agendamento, consentimento/preferência, janela de envio e versão do modelo. Implementar tentativas com atraso exponencial, fila de falhas e reprocessamento auditado. Webhook repetido não duplica pagamento nem altera duas vezes o agendamento.</p>
+<h2 id="11-seguranca-e-privacidade">11. Segurança e privacidade</h2>
+<h3 id="111-controles-obrigatorios">11.1 Controles obrigatórios</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Risco</th>
+<th>Controle preventivo/detectivo</th>
+<th>Evidência de aceite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acesso entre clínicas</td>
+<td>RLS, autorização por recurso e chaves compostas</td>
+<td>Testes negativos em API, jobs, busca e anexos</td>
+</tr>
+<tr>
+<td>Conta comprometida</td>
+<td>MFA para equipe, recuperação segura, revogação e limites de tentativas</td>
+<td>Sessão revogada perde acesso; recuperação auditada</td>
+</tr>
+<tr>
+<td>Recepção lendo prontuário</td>
+<td>Papéis + vínculo assistencial; negação por padrão</td>
+<td>Matriz de permissões testada</td>
+</tr>
+<tr>
+<td>Vazamento de foto</td>
+<td>S3 privado, escopo mínimo, URL curta e log</td>
+<td>URL expira e tenant incorreto é negado</td>
+</tr>
+<tr>
+<td>Alteração de histórico</td>
+<td>Registros finalizados imutáveis e adendos</td>
+<td>Original não muda após correção</td>
+</tr>
+<tr>
+<td>Upload malicioso</td>
+<td>Quarentena, assinatura real de arquivo, limite e scanner</td>
+<td>Arquivo não liberado antes da verificação</td>
+</tr>
+<tr>
+<td>Ransomware/perda</td>
+<td>Backups isolados, versões e restauração ensaiada</td>
+<td>Recuperação cronometrada e reconciliada</td>
+</tr>
+<tr>
+<td>Vazamento em telemetria</td>
+<td>Redação de dados, sem payloads clínicos ou gravação de sessão</td>
+<td>Inspeção de logs e traces</td>
+</tr>
+<tr>
+<td>Abuso administrativo</td>
+<td>MFA, acesso temporário, motivo e revisão</td>
+<td>Auditoria exportável e alertas</td>
+</tr>
+<tr>
+<td>Dependência vulnerável</td>
+<td>Inventário, scanner, atualização e revisão de imagens</td>
+<td>Sem vulnerabilidade crítica explorável aberta</td>
+</tr>
+</tbody>
+</table></div>
+<p>Criptografia em trânsito e em repouso, incluindo backups. Princípio do menor privilégio em IAM, banco e aplicação. Política de sessão proposta: bloqueio por 15 minutos de inatividade em telas clínicas, duração máxima configurada e reautenticação em ações sensíveis. Validar usabilidade e não descartar rascunhos já salvos.</p>
+<p>Auditar leitura de prontuário e foto, finalização, exportação, permissão, acesso de suporte e alterações financeiras. Log contém identidade, ação, recurso, momento, resultado e motivo quando necessário; não copia a narrativa clínica. Proteger contra alteração com destino separado e controles de retenção.</p>
+<p>Adotar OWASP ASVS 5.0 nível 2 como base de verificação, com controles adicionais por risco para dados clínicos. Isso é uma meta de engenharia, não uma certificação automaticamente obtida. <a href="https://github.com/OWASP/ASVS">OWASP ASVS</a>.</p>
+<h3 id="112-lgpd-e-governanca">11.2 LGPD e governança</h3>
+<p>Dados de saúde são sensíveis. Mapear finalidade e hipótese legal por tratamento; não usar um consentimento genérico para todas as operações. A clínica tende a controlar o tratamento assistencial; o SaaS tende a atuar como operador nesse serviço, podendo ser controlador de atividades próprias, como faturamento. Formalizar os papéis contratualmente. Separar assistência, comunicação operacional, marketing e uso de imagens. <a href="https://planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm">LGPD</a>.</p>
+<p>Manter inventário de dados, fornecedores e subprocessadores, registro das operações, canal de direitos e avaliação de impacto proporcional ao risco. Exportação, correção, restrição e exclusão passam por identificação do solicitante e análise de obrigações de guarda.</p>
+<p>Preferir São Paulo para banco, objetos e backups centrais. Serviços de autenticação, suporte, telemetria e IA também entram no mapa de fluxo: usar cloud no Brasil não garante ausência de transferência internacional. Avaliar mecanismos contratuais aplicáveis antes de enviar dados a outro país. <a href="https://www.gov.br/anpd/pt-br/acesso-a-informacao/institucional/atos-normativos/regulamentacoes_anpd/resolucao-cd-anpd-no-19-de-23-de-agosto-de-2024">ANPD — transferências internacionais</a>.</p>
+<p>Para incidentes com risco ou dano relevante, preparar processo de avaliação e comunicação pelo controlador. A orientação oficial informa prazo de três dias úteis, ressalvadas regras específicas. Definir alerta interno imediato ao responsável, preservação de evidências e cooperação do operador para cumprir o prazo aplicável. <a href="https://www.gov.br/anpd/pt-br/canais_atendimento/agente-de-tratamento/comunicado-de-incidente-de-seguranca-cis?sck=direto">ANPD — comunicação de incidentes</a>.</p>
+<h3 id="113-guarda-validade-documental-e-responsabilidade-clinica">11.3 Guarda, validade documental e responsabilidade clínica</h3>
+<p>A Lei 13.787/2018 trata de digitalização e guarda de prontuários e prevê prazo mínimo de 20 anos a partir do último registro para possível eliminação de prontuários em papel e digitalizados. Isso não deve virar uma rotina automática indiscriminada: validar aplicação ao documento nato digital, normas profissionais e impedimentos de descarte. Digitalização e assinatura têm requisitos próprios. <a href="https://portalsinan.saude.gov.br/images/documentos/Legislacoes/LEI_13787_27_DEZEMBRO_2018.pdf">Texto oficial da Lei 13.787/2018</a>.</p>
+<p>Antes do uso clínico, o responsável jurídico e o responsável clínico devem aprovar matriz de retenção por classe, procedimentos de assinatura, acesso de responsáveis, tratamento de menores e regras profissionais aplicáveis. Não aplicar normas de um conselho automaticamente a todas as profissões. A habilitação do usuário e o escopo de atuação devem ser verificados pela clínica; uma seleção no software não constitui autorização profissional.</p>
+<p>Política técnica proposta: backup recuperável por 35 dias; logs técnicos por 30–90 dias conforme minimização; auditoria e documentos conforme matriz aprovada; áudio bruto de IA por até 7 dias após revisão, quando permitido, com expiração configurável. Guardas legais prevalecem. Desativação de conta não apaga prontuários automaticamente. Restauração de backup reaplica registros de exclusão/restrição para não reativar dados eliminados legitimamente.</p>
+<h2 id="12-requisitos-nao-funcionais-e-operacao">12. Requisitos não funcionais e operação</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Meta proposta</th>
+<th>Forma de medição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RNF01</td>
+<td>Disponibilidade mensal de 99,5% no piloto; 99,9% na versão comercial</td>
+<td>Sonda externa das jornadas críticas e relatório de incidentes</td>
+</tr>
+<tr>
+<td>RNF02</td>
+<td>API p95 até 500 ms em leituras e 1 s em escritas usuais, sem upload/terceiros</td>
+<td>Teste com volume de referência, consultas representativas e 100 sessões simultâneas</td>
+</tr>
+<tr>
+<td>RNF03</td>
+<td>Tela principal útil em até 3 s em rede móvel de teste definida</td>
+<td>Aparelhos intermediários e medição sintética; definir RTT/banda no ensaio</td>
+</tr>
+<tr>
+<td>RNF04</td>
+<td>RPO até 15 min e RTO até 4 h para recuperação de dados na região</td>
+<td>Teste trimestral de restore; medir banco, objetos e permissões</td>
+</tr>
+<tr>
+<td>RNF05</td>
+<td>Perda regional: RPO 24 h / RTO 24–48 h como objetivo inicial</td>
+<td>Cópia para região de contingência aprovada e exercício anual; não prometido antes da implantação</td>
+</tr>
+<tr>
+<td>RNF06</td>
+<td>WCAG 2.2 AA nas jornadas essenciais</td>
+<td>Automação + teclado, leitor de tela e verificação manual</td>
+</tr>
+<tr>
+<td>RNF07</td>
+<td>Zero vazamento entre tenants nos cenários testados</td>
+<td>Suíte de autorização em toda entrega</td>
+</tr>
+<tr>
+<td>RNF08</td>
+<td>Exportação de prontuário sem perda de autoria, versão ou anexos</td>
+<td>Reconciliação e revisão de amostra</td>
+</tr>
+</tbody>
+</table></div>
+<p>Os números são metas, não SLAs contratuais já demonstrados. 99,9% corresponde a aproximadamente 43 minutos de indisponibilidade em 30 dias; 99,5%, a 3 h 36 min. Definir janela, exclusões contratuais e forma de medição antes de vender um SLA.</p>
+<p>Monitorar taxa de erro, latência, conexões do banco, armazenamento, idade da fila, atraso de lembretes, falhas de upload, negações anormais de acesso e custo por organização. Alertas críticos precisam de responsável e escala de atendimento compatível com o SLA; monitoramento sem capacidade de resposta não garante disponibilidade.</p>
+<p>Backup do banco com recuperação pontual, versionamento dos objetos e cópia protegida contra credenciais de produção comprometidas. Manter manifesto de anexos e reconciliar arquivos órfãos/ausentes após restore. Para desastre regional, selecionar região secundária e formalizar eventual transferência internacional antes de ativar a cópia; até isso ocorrer, o risco regional permanece registrado.</p>
+<p>Runbooks obrigatórios: indisponibilidade, falha de banco, restauração, fila represada, provedor de mensagem fora do ar, credencial comprometida, vazamento e reversão de release. Em indisponibilidade, orientar contingência da clínica e posterior transcrição auditada; não simular atendimento salvo.</p>
+<h2 id="13-experiencia-responsiva-e-acessibilidade">13. Experiência responsiva e acessibilidade</h2>
+<p>Arquitetura de informação: <strong>Hoje, Pacientes, Agenda, Retornos, Atendimento, Financeiro, Estoque e Configurações</strong>, com opções exibidas conforme papel e plano. O painel “Hoje” mostra próximos horários, retornos vencidos e tarefas; dados clínicos detalhados só aparecem quando o usuário abre o atendimento autorizado.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Dispositivo</th>
+<th>Comportamento proposto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Smartphone, 360–767 px</td>
+<td>Lista diária de agenda; navegação curta; formulário em etapas; ações principais ao alcance do toque</td>
+</tr>
+<tr>
+<td>Tablet, 768–1199 px</td>
+<td>Agenda diária/semanal simplificada; paciente e formulário em duas áreas quando houver espaço</td>
+</tr>
+<tr>
+<td>Desktop, a partir de 1200 px</td>
+<td>Menu lateral, agenda ampliada e painéis comparativos</td>
+</tr>
+</tbody>
+</table></div>
+<p>Evitar arrastar como único modo de reagendar; oferecer edição por formulário. Botões de ação com alvo preferencial de 44×44 px, foco visível, rótulos e mensagens de erro associadas aos campos. Não usar apenas cor para indicar atraso, alergia ou status. Contraste mínimo de texto normal 4,5:1 e de texto grande 3:1; validar estados de hover, desabilitado e foco. Referência: <a href="https://www.w3.org/TR/wcag/">WCAG 2.2</a>.</p>
+<p>PWA instalável opcionalmente, com cache apenas do shell público e recursos estáticos. Sem prontuário persistido em service worker/IndexedDB no MVP. Sessões, formulários e prévias são limpos ao sair. Fluxos longos exigem estados claros de “salvando”, “salvo” e “falha ao salvar”.</p>
+<h2 id="14-marca-e-identidade-visual">14. Marca e identidade visual</h2><div class="logo-grid"><figure><svg xmlns="http://www.w3.org/2000/svg" width="400" height="245" viewBox="0 0 400 245" role="img" aria-label="Estudo de marca Verdia"><rect width="400" height="245" rx="20" fill="#EAF4EE"/><g transform="translate(100 12)"><path d="M30 25C72 20 101 51 100 106C57 105 29 76 30 25Z" fill="#145C45"/><path d="M170 25C128 20 99 51 100 106C143 105 171 76 170 25Z" fill="#A8C5B5"/><path d="M56 48L100 116L144 48" fill="none" stroke="#0B3D2E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></g><text x="200" y="180" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#0B3D2E">Verdia</text><text x="200" y="209" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#145C45">CRM e gestão clínica</text></svg><figcaption>Estudo 1 · recomendado</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="400" height="245" viewBox="0 0 400 245" role="img" aria-label="Estudo de marca EloVita"><rect width="400" height="245" rx="20" fill="#EAF4EE"/><g transform="translate(100 12)"><ellipse cx="79" cy="70" rx="34" ry="43" transform="rotate(-35 79 70)" fill="none" stroke="#145C45" stroke-width="13"/><ellipse cx="124" cy="70" rx="34" ry="43" transform="rotate(35 124 70)" fill="none" stroke="#A8C5B5" stroke-width="13"/></g><text x="200" y="180" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#0B3D2E">EloVita</text><text x="200" y="209" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#145C45">Conexões de cuidado</text></svg><figcaption>Estudo 2 · alternativa</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="400" height="245" viewBox="0 0 400 245" role="img" aria-label="Estudo de marca Núcleo Verde"><rect width="400" height="245" rx="20" fill="#EAF4EE"/><g transform="translate(100 12)"><path d="M100 34L145 101H55Z" stroke="#A8C5B5" stroke-width="9" fill="none" stroke-linejoin="round"/><circle cx="100" cy="74" r="20" fill="#145C45"/><g fill="#0B3D2E"><circle cx="100" cy="28" r="12"/><circle cx="151" cy="106" r="12"/><circle cx="49" cy="106" r="12"/></g></g><text x="200" y="180" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#0B3D2E">Núcleo Verde</text><text x="200" y="209" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#145C45">Informação que aproxima</text></svg><figcaption>Estudo 3 · alternativa</figcaption></figure></div><div class="swatches"><div><span style="background:#145C45"></span><b>Floresta</b><code>#145C45</code></div><div><span style="background:#0B3D2E"></span><b>Profundo</b><code>#0B3D2E</code></div><div><span style="background:#A8C5B5"></span><b>Sálvia</b><code>#A8C5B5</code></div><div><span style="background:#EAF4EE"></span><b>Menta</b><code>#EAF4EE</code></div><div><span style="background:#F7FAF8"></span><b>Base</b><code>#F7FAF8</code></div><div><span style="background:#1F2933"></span><b>Grafite</b><code>#1F2933</code></div></div>
+<h3 id="141-nome-recomendado">14.1 Nome recomendado</h3>
+<p><strong>Verdia</strong> — nome curto, associado a verde, vitalidade e organização do dia. Descritor: <strong>CRM e gestão clínica</strong>. Assinatura proposta: <strong>“Cuidado que acompanha.”</strong> É uma hipótese de marca, sem verificação de disponibilidade jurídica, domínio ou redes sociais. Antes da escolha final, fazer busca de anterioridade no INPI, domínio e conflitos no segmento.</p>
+<p>Alternativas: <strong>EloVita</strong>, com foco em vínculo e continuidade, e <strong>Núcleo Verde</strong>, com foco em organização e acolhimento. São propostas criativas, também sem disponibilidade verificada.</p>
+<h3 id="142-paleta-proposta">14.2 Paleta proposta</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Papel</th>
+<th>Cor</th>
+<th>Código</th>
+<th>Aplicação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primária</td>
+<td>Verde floresta</td>
+<td>#145C45</td>
+<td>Botões principais, navegação e marca</td>
+</tr>
+<tr>
+<td>Secundária</td>
+<td>Verde profundo</td>
+<td>#0B3D2E</td>
+<td>Títulos e áreas de destaque</td>
+</tr>
+<tr>
+<td>Apoio</td>
+<td>Sálvia</td>
+<td>#A8C5B5</td>
+<td>Superfícies secundárias e elementos gráficos</td>
+</tr>
+<tr>
+<td>Fundo suave</td>
+<td>Menta clara</td>
+<td>#EAF4EE</td>
+<td>Destaques leves e cartões</td>
+</tr>
+<tr>
+<td>Fundo base</td>
+<td>Branco quente</td>
+<td>#F7FAF8</td>
+<td>Páginas e formulários</td>
+</tr>
+<tr>
+<td>Texto</td>
+<td>Grafite esverdeado</td>
+<td>#1F2933</td>
+<td>Texto principal</td>
+</tr>
+<tr>
+<td>Atenção</td>
+<td>Âmbar escuro</td>
+<td>#8A4B08</td>
+<td>Pendências, sempre com ícone/texto</td>
+</tr>
+<tr>
+<td>Erro</td>
+<td>Vermelho escuro</td>
+<td>#B42318</td>
+<td>Falhas e ações destrutivas</td>
+</tr>
+</tbody>
+</table></div>
+<p>Usar branco sobre verde floresta nos botões; sálvia deve ser fundo ou ornamento, não texto pequeno em branco. Tipografia sans-serif legível, preferencialmente Inter ou família de sistema, corpo de pelo menos 16 px em formulários móveis.</p>
+<h3 id="143-tres-conceitos-de-logomarca">14.3 Três conceitos de logomarca</h3>
+<ol>
+<li><strong>Verdia / folha em V:</strong> duas folhas geométricas formam um V; comunica vitalidade sem prometer resultados estéticos. Principal recomendação para ícone de app e marca horizontal.</li>
+<li><strong>EloVita / elos de cuidado:</strong> dois arcos entrelaçados formam um elo aberto; simboliza acompanhamento e relação profissional–paciente.</li>
+<li><strong>Núcleo Verde / pontos orbitais:</strong> núcleo com três pontos conectados; remete à organização do cuidado, equipe e informação.</li>
+</ol>
+<p>O documento visual acompanha estudos vetoriais desses conceitos. São esboços de direção, não identidades finais. Refinar a marca escolhida em versões monocromática, reduzida, horizontal e vertical; testar legibilidade a 24 px e pesquisar semelhanças com marcas existentes. Evitar símbolos protegidos e aparência de certificação médica.</p>
+<h2 id="15-fases-e-pequenas-entregas">15. Fases e pequenas entregas</h2>
+<p>As durações são sequenciais para tornar o orçamento comparável; algumas atividades de design e segurança podem ocorrer em paralelo dentro da mesma equipe. A complexidade cresce por dependência. A base de segurança vem primeiro mesmo exigindo trabalho especializado.</p>
+<h3 id="f0-descoberta-e-fundacao-2-semanas">F0 — Descoberta e fundação · 2 semanas</h3>
+<p><strong>Incremento 0.1:</strong> revisar jornadas com biomédico e recepção; esclarecer ilegíveis; definir campos mínimos, matriz de papéis e dados sintéticos. Entregar backlog priorizado, protótipo das telas principais e ADRs.</p>
+<p><strong>Incremento 0.2:</strong> repositório, pipeline, homologação cloud, autenticação/MFA, organização, permissões, logs sanitizados e backup. <strong>Aceite:</strong> duas clínicas de teste não acessam dados uma da outra; login/recuperação funcionam; restore de teste documentado. Dependência: responsáveis de produto e clínico disponíveis.</p>
+<h3 id="f1-cadastro-de-pacientes-2-semanas">F1 — Cadastro de pacientes · 2 semanas</h3>
+<p><strong>Incremento 1.1:</strong> cadastro mínimo, busca, edição, responsáveis e avisos de possível duplicidade. <strong>Incremento 1.2:</strong> preferências de contato, importação CSV com prévia/erros e exportação administrativa controlada.</p>
+<p><strong>Aceite:</strong> recepção cadastra e encontra um paciente em teste de uso; importação repetida não duplica registros sem aviso; papéis e auditoria verificados. A liberação com dados reais depende dos controles de F0 e da governança correspondente.</p>
+<h3 id="f2-agenda-e-retornos-24-semanas">F2 — Agenda e retornos · 2–4 semanas</h3>
+<p><strong>Incremento 2.1:</strong> agenda diária, recursos, bloqueios e reserva transacional. <strong>Incremento 2.2:</strong> confirmação manual, cancelamento, falta e reagendamento. <strong>Incremento 2.3:</strong> lista de retornos e tarefas de contato, com lembrete interno ou e-mail operacional quando contratado.</p>
+<p><strong>Aceite:</strong> tentativa simultânea de reservar o mesmo recurso retorna conflito; cancelamento remove lembrete pendente; tarefa de retorno permanece rastreável. <strong>Marco:</strong> piloto administrativo em 6–8 semanas acumuladas.</p>
+<h3 id="f3-prontuario-e-anamnese-46-semanas">F3 — Prontuário e anamnese · 4–6 semanas</h3>
+<p><strong>Incremento 3.1:</strong> catálogo de procedimentos e templates de anamnese versionados. <strong>Incremento 3.2:</strong> atendimento, evolução e salvamento de rascunhos. <strong>Incremento 3.3:</strong> finalização, adendos, exportação e trilha de leitura/acesso. Incluir assinatura apropriada ao fluxo definido na análise documental; integração externa pode ser necessária nesta fase se exigida.</p>
+<p><strong>Aceite:</strong> atualizar template não altera resposta antiga; recepção não acessa narrativa clínica; adendo preserva original; exportação confere com fonte; responsável clínico aprova fluxo documental e regras de assinatura. <strong>Marco:</strong> MVP clínico em 10–14 semanas acumuladas.</p>
+<h3 id="f4-fotos-e-acompanhamento-34-semanas">F4 — Fotos e acompanhamento · 3–4 semanas</h3>
+<p><strong>Incremento 4.1:</strong> anexos com quarentena e galeria autorizada. <strong>Incremento 4.2:</strong> comparação visual antes/depois e vinculação ao atendimento. <strong>Incremento 4.3:</strong> modelos revisados de orientação, cronograma e fila de respostas.</p>
+<p><strong>Aceite:</strong> original preservado; arquivo malicioso bloqueado; link expirado não funciona; uso comercial depende de autorização específica; respostas são atribuídas a uma pessoa responsável. Acumulado: 13–18 semanas.</p>
+<h3 id="f5-financeiro-operacional-46-semanas">F5 — Financeiro operacional · 4–6 semanas</h3>
+<p><strong>Incremento 5.1:</strong> contas e parcelas com vencimento. <strong>Incremento 5.2:</strong> pagamentos, conciliação manual, estornos e alertas. <strong>Incremento 5.3:</strong> fluxo de caixa mensal/anual, receita por procedimento e projeção determinística de recebíveis.</p>
+<p><strong>Aceite:</strong> pagamento parcial não quita saldo restante; estorno não apaga histórico; totais do relatório reconciliam com lançamentos; permissões mantêm segregação. Acumulado: 17–24 semanas. Não inclui escrituração fiscal.</p>
+<h3 id="f6-estoque-e-fornecedores-68-semanas">F6 — Estoque e fornecedores · 6–8 semanas</h3>
+<p><strong>Incremento 6.1:</strong> produtos, unidades, fornecedores, entradas e saídas. <strong>Incremento 6.2:</strong> lotes, validade, perdas e consumo por atendimento. <strong>Incremento 6.3:</strong> importação de XML compatível com conferência e prevenção de duplicidade. <strong>Incremento 6.4:</strong> cotações e comparação de custo total.</p>
+<p><strong>Aceite:</strong> saldo reconcilia com movimentos; duas saídas simultâneas não ultrapassam estoque; lote vencido bloqueado; nota repetida identificada; é possível localizar pacientes ligados a um lote. Acumulado: 23–32 semanas.</p>
+<h3 id="f7-integracoes-e-expansao-48-semanas-por-pacote-priorizado">F7 — Integrações e expansão · 4–8 semanas por pacote priorizado</h3>
+<p><strong>Pacote A:</strong> WhatsApp oficial e portal para confirmação/ficha. <strong>Pacote B:</strong> pagamentos e conciliação por webhook. <strong>Pacote C:</strong> agenda externa, exportação contábil e biblioteca de referências/congressos. <strong>Pacote D:</strong> planos SaaS, cobrança e medição de consumo.</p>
+<p>Cada pacote é contratado/priorizado separadamente; a duração não cobre todos simultaneamente. <strong>Aceite comum:</strong> autenticação e webhooks validados, eventos duplicados inofensivos, falha do fornecedor não bloqueia atendimento e dados compartilhados minimizados.</p>
+<h3 id="f8-inteligencia-assistida-612-semanas-por-capacidade">F8 — Inteligência assistida · 6–12 semanas por capacidade</h3>
+<p><strong>Sequência:</strong> OCR assistido → ditado e transcrição → rascunho estruturado → resumo com referência à fonte → gráficos laboratoriais e projeções estatísticas → eventual pesquisa de interpretação de imagens/recomendação clínica.</p>
+<p><strong>Aceite:</strong> avaliação em corpus autorizado, campos críticos conferidos, origem rastreável, custo limitado, possibilidade de desligar a função e nenhum registro finalizado sem revisão. Funções clínicas avançadas têm cronograma próprio após avaliação regulatória; não estão incluídas automaticamente nas 6–12 semanas.</p>
+<h2 id="16-modelos-de-inteligencia-e-limites-de-automacao">16. Modelos de inteligência e limites de automação</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Capacidade</th>
+<th>Modelo/técnica</th>
+<th>Dados e validação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reconhecer nota e documento</td>
+<td>Parser XML primeiro; OCR quando necessário</td>
+<td>Conferir emitente, itens, valores e duplicidade antes de gravar</td>
+</tr>
+<tr>
+<td>Ditado clínico</td>
+<td>Modelo de reconhecimento de fala em português</td>
+<td>Medir erro geral e erro em termos críticos; revisar nomes, valores e negações</td>
+</tr>
+<tr>
+<td>Estruturar prontuário</td>
+<td>Modelo de linguagem com saída em esquema validado</td>
+<td>Somente rascunho, com evidência de origem e campos desconhecidos explícitos</td>
+</tr>
+<tr>
+<td>Buscar referências</td>
+<td>Busca textual; RAG sobre coleção aprovada</td>
+<td>Citar trecho, fonte, data e versão; respeitar isolamento por clínica</td>
+</tr>
+<tr>
+<td>Comparar fotos</td>
+<td>Visualização padronizada primeiro</td>
+<td>IA quantitativa somente após validação específica; não inferir diagnóstico automaticamente</td>
+</tr>
+<tr>
+<td>Projetar caixa</td>
+<td>Regras de recebíveis; depois modelos de séries temporais</td>
+<td>Backtesting, erro e intervalos; avaliar sazonalidade e amostra insuficiente</td>
+</tr>
+<tr>
+<td>Gráficos laboratoriais</td>
+<td>Série temporal com unidade e intervalo do laboratório</td>
+<td>Conversões explícitas; não usar “parâmetro ideal” universal</td>
+</tr>
+</tbody>
+</table></div>
+<p>Não é necessário treinar um modelo próprio para iniciar. Selecionar fornecedor por avaliação de português, qualidade, privacidade, região, retenção, custo e contrato. Modelos específicos só serão fixados após esse benchmark; não se presume que qualquer serviço permita processar dados de pacientes nas condições necessárias.</p>
+<p>Criar conjunto de avaliação sintético ou autorizado, representando sotaques, ruído, documentos ruins e negações. Para passagem a piloto de rascunhos, exigir ausência de erros críticos não detectados na amostra de validação e 100% de conferência humana dos campos críticos. Essa aprovação da amostra não é garantia estatística de erro zero em produção. Registrar edições e taxa de rejeição, sem expor dados em telemetria.</p>
+<p>Documentos e áudios são conteúdo não confiável: instruções embutidas não podem comandar ferramentas, exportar dados ou mudar permissões. A IA não pode comprar produtos, enviar mensagens clínicas, prescrever ou finalizar registros por conta própria. Minimizar dados enviados, não usar conteúdo de pacientes para treinamento próprio por padrão e aplicar orçamento por tenant.</p>
+<p>Software com finalidade de diagnóstico, monitoramento ou recomendação terapêutica pode exigir enquadramento como dispositivo médico. Revisão humana, sozinha, não determina dispensa regulatória. Definir finalidade de uso e avaliar enquadramento antes de implementar ou divulgar essas capacidades. <a href="https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2022/software-como-dispositivo-medico-perguntas-e-respostas/">Anvisa — software como dispositivo médico</a>.</p>
+<h2 id="17-integracoes-futuras">17. Integrações futuras</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Serviço</th>
+<th>Benefício</th>
+<th>Dependências e cuidados</th>
+<th>Prioridade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WhatsApp Business Platform</td>
+<td>Confirmação e lembretes</td>
+<td>Modelos aprovados, preferências, opt-out, custos e entrega assíncrona</td>
+<td>Alta após F3</td>
+</tr>
+<tr>
+<td>E-mail transacional</td>
+<td>Convites, recuperação e lembretes</td>
+<td>SPF/DKIM/DMARC, reputação e conteúdo mínimo</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Google/Microsoft Calendar</td>
+<td>Visão externa de disponibilidade</td>
+<td>OAuth, sincronização e conflitos; enviar bloqueios genéricos sem narrativa clínica</td>
+<td>Média</td>
+</tr>
+<tr>
+<td>PSP com Pix/cartão</td>
+<td>Cobrança e conciliação</td>
+<td>Checkout hospedado, webhooks, estornos e taxas; não armazenar cartão</td>
+<td>Alta após F5</td>
+</tr>
+<tr>
+<td>Assinatura eletrônica/digital</td>
+<td>Formalização de documentos</td>
+<td>Modalidade adequada, evidência e validação jurídica do fluxo</td>
+<td>Conforme F3</td>
+</tr>
+<tr>
+<td>Contabilidade/ERP</td>
+<td>Evitar digitação duplicada</td>
+<td>Exportação mapeada e validação pelo contador</td>
+<td>Média</td>
+</tr>
+<tr>
+<td>Serviços fiscais</td>
+<td>NFS-e e importação fiscal</td>
+<td>Município, provedor, contrato e regras tributárias</td>
+<td>Média</td>
+</tr>
+<tr>
+<td>Laboratórios/FHIR</td>
+<td>Receber resultados estruturados</td>
+<td>Acordo com origem, identificação e mapeamento de unidades</td>
+<td>Posterior</td>
+</tr>
+<tr>
+<td>Fornecedores</td>
+<td>Catálogo, cotação e pedido assistido</td>
+<td>API/licença, qualidade da fonte e aprovação de compra</td>
+<td>Posterior</td>
+</tr>
+<tr>
+<td>Eventos e biblioteca</td>
+<td>Congressos, vídeos e referências atualizadas</td>
+<td>Curadoria, direitos de uso, fonte e data de revisão</td>
+<td>Média</td>
+</tr>
+</tbody>
+</table></div>
+<p>FHIR é uma opção de interoperabilidade quando o parceiro oferecer suporte; não pressupõe conexão automática com laboratórios, RNDS ou outros sistemas. Evitar scraping como dependência central. “Fornecedor confiável” deve ter critérios documentados e evidências, não selo automático gerado por IA.</p>
+<h2 id="18-equipe-esforco-e-investimento-de-desenvolvimento">18. Equipe, esforço e investimento de desenvolvimento</h2>
+<p>Equipe-base proposta: 1 líder técnico/backend, 1 desenvolvedor full-stack, designer de produto parcial, QA parcial, DevOps/segurança parcial e profissional clínico como especialista de domínio. Um responsável de produto decide prioridades. Jurídico/privacidade entra em marcos específicos. O tempo clínico e de homologação precisa estar reservado.</p>
+<p>Estimativas próprias de planejamento, em horas totais de equipe; não são pesquisa salarial ou proposta de fornecedor. Taxa média hipotética de <strong>R$ 140–220/h</strong>, incluindo a composição das funções técnicas. A execução por equipe interna ou pelo fundador altera desembolso, mas não elimina esforço, revisão e operação.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Fase</th>
+<th style="text-align: right;">Horas estimadas</th>
+<th style="text-align: right;">Custo pela faixa hipotética</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F0</td>
+<td style="text-align: right;">140–220</td>
+<td style="text-align: right;">R$ 19.600–48.400</td>
+</tr>
+<tr>
+<td>F1</td>
+<td style="text-align: right;">120–180</td>
+<td style="text-align: right;">R$ 16.800–39.600</td>
+</tr>
+<tr>
+<td>F2</td>
+<td style="text-align: right;">180–280</td>
+<td style="text-align: right;">R$ 25.200–61.600</td>
+</tr>
+<tr>
+<td>F3</td>
+<td style="text-align: right;">280–420</td>
+<td style="text-align: right;">R$ 39.200–92.400</td>
+</tr>
+<tr>
+<td>F4</td>
+<td style="text-align: right;">220–340</td>
+<td style="text-align: right;">R$ 30.800–74.800</td>
+</tr>
+<tr>
+<td>F5</td>
+<td style="text-align: right;">260–420</td>
+<td style="text-align: right;">R$ 36.400–92.400</td>
+</tr>
+<tr>
+<td>F6</td>
+<td style="text-align: right;">360–560</td>
+<td style="text-align: right;">R$ 50.400–123.200</td>
+</tr>
+<tr>
+<td>F7, por pacote</td>
+<td style="text-align: right;">240–420</td>
+<td style="text-align: right;">R$ 33.600–92.400</td>
+</tr>
+<tr>
+<td>F8, por capacidade</td>
+<td style="text-align: right;">360–640</td>
+<td style="text-align: right;">R$ 50.400–140.800</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>MVP F0–F3:</strong> 720–1.100 h, R$ 100.800–242.000; com reserva de 20%, <strong>R$ 120.960–290.400</strong>. <strong>Operação ampliada F0–F6:</strong> 1.560–2.420 h, R$ 218.400–532.400; com reserva de 20%, <strong>R$ 262.080–638.880</strong>. F7/F8 não estão nesses totais.</p>
+<p>Prazo e horas não são equivalentes: homologação, aprovação de fornecedores e disponibilidade do especialista afetam o calendário. Reservas adicionais, a cotar: revisão jurídica/privacidade R$ 5–20 mil e teste independente de segurança R$ 8–25 mil. Esses valores são provisões propostas, não preços de mercado verificados. Não incluem certificação, regularização de dispositivo médico, tributos da contratação ou pesquisa clínica.</p>
+<p>Para reduzir investimento inicial, contratar apenas F0–F2, validar uso com clínicas e só então executar F3. Não reduzir isolamento, backup ou autorização para encaixar módulos extras no mesmo orçamento.</p>
+<h2 id="19-custos-recorrentes-e-premissas-de-orcamento">19. Custos recorrentes e premissas de orçamento</h2>
+<h3 id="191-infraestrutura-cloud">19.1 Infraestrutura cloud</h3>
+<p>Valores abaixo são <strong>faixas de reserva estimadas</strong>, não soma de preços regionais cotados em calculadora. Referência de consulta: 05/10/2026. Antes da contratação, gerar cotação na região São Paulo com tamanhos, horas, tráfego e impostos; guardar o resultado como anexo deste SDD. Nenhum crédito gratuito foi considerado.</p>
+<p>Hipótese do piloto: serviços pequenos, uma zona para banco, 50 GB em objetos, 50 GB de banco provisionado, cerca de 100 GB/mês de saída, até 10 GB/mês de logs sanitizados e homologação reduzida. Hipótese comercial: duas réplicas web e duas de API, worker, RDS Multi-AZ, 100 GB de banco provisionado, 500 GB em objetos, até 500 GB de saída e 30 GB de logs. Retenção e cópias aumentam os volumes faturados.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Componente mensal</th>
+<th style="text-align: right;">Piloto, US$</th>
+<th style="text-align: right;">Comercial inicial, US$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aplicação web/API/worker em containers</td>
+<td style="text-align: right;">60–140</td>
+<td style="text-align: right;">180–380</td>
+</tr>
+<tr>
+<td>PostgreSQL gerenciado e armazenamento básico</td>
+<td style="text-align: right;">70–150</td>
+<td style="text-align: right;">220–450</td>
+</tr>
+<tr>
+<td>Balanceador, WAF, rede, NAT/endpoints e IPv4</td>
+<td style="text-align: right;">60–140</td>
+<td style="text-align: right;">130–280</td>
+</tr>
+<tr>
+<td>Objetos, versões, backup e transferência</td>
+<td style="text-align: right;">15–45</td>
+<td style="text-align: right;">50–150</td>
+</tr>
+<tr>
+<td>Logs, métricas, chaves, segredos, DNS e autenticação</td>
+<td style="text-align: right;">25–75</td>
+<td style="text-align: right;">60–180</td>
+</tr>
+<tr>
+<td>Homologação e execução de CI</td>
+<td style="text-align: right;">25–70</td>
+<td style="text-align: right;">50–140</td>
+</tr>
+<tr>
+<td><strong>Total estimado</strong></td>
+<td style="text-align: right;"><strong>255–620</strong></td>
+<td style="text-align: right;"><strong>690–1.580</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Usando <strong>R$ 5,50/US$ apenas como cenário</strong>, e não cotação cambial, os totais seriam R$ 1.402,50–3.410/mês no piloto e R$ 3.795–8.690/mês na operação comercial. Acrescentar 20% de reserva resulta em aproximadamente <strong>R$ 1.683–4.092</strong> e <strong>R$ 4.554–10.428</strong>, respectivamente. Tributos e variação cambial devem ser calculados conforme contratação. Contingência regional completa e suporte premium de cloud exigem cotação adicional.</p>
+<p>Fargate cobra por recursos alocados e tempo; banco e armazenamento têm componentes próprios, e rede pode gerar custos adicionais. Fontes de precificação: <a href="https://aws.amazon.com/fargate/pricing/?nc1=h_ls">Fargate</a>, <a href="https://aws.amazon.com/rds/postgresql/pricing/">RDS PostgreSQL</a>, <a href="https://aws.amazon.com/s3/pricing/">S3</a>, <a href="https://aws.amazon.com/vpc/pricing/">VPC</a> e <a href="https://aws.amazon.com/cognito/pricing/">Cognito</a>.</p>
+<h3 id="192-outros-custos">19.2 Outros custos</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Tratamento no orçamento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Domínio</td>
+<td>Reserva proposta de R$ 50–150/ano; verificar extensão e disponibilidade</td>
+</tr>
+<tr>
+<td>Git, editor, bibliotecas e testes locais</td>
+<td>Opções sem licença paga; verificar licenças e necessidades comerciais</td>
+</tr>
+<tr>
+<td>GitHub, design e gestão de projetos</td>
+<td>Reserva de R$ 0–800/mês para equipe pequena, conforme planos escolhidos</td>
+</tr>
+<tr>
+<td>Mensageria</td>
+<td>Quantidade faturável × tarifa por país/categoria + taxa do intermediário, se houver</td>
+</tr>
+<tr>
+<td>OCR, voz e LLM</td>
+<td>Páginas/minutos/tokens × tarifa contratada, com cota por clínica</td>
+</tr>
+<tr>
+<td>Assinatura digital</td>
+<td>Custo por documento, usuário ou pacote; cotar conforme fluxo</td>
+</tr>
+<tr>
+<td>Pagamentos</td>
+<td>Tarifa do meio de pagamento, conciliação e eventuais estornos</td>
+</tr>
+<tr>
+<td>Operação e manutenção</td>
+<td>40–80 h/mês × R$ 140–220 = R$ 5.600–17.600/mês, hipótese sem plantão 24×7</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mensagens não têm um custo único universal; validar tabela vigente e condições de categoria/destino. <a href="https://whatsappbusiness.com/es-la/products/platform-pricing/">WhatsApp Business — precificação</a>.</p>
+<p>Exemplo de sensibilidade, sem representar tarifa real: 10 mil mensagens a R$ 0,10 geram R$ 1.000; a R$ 0,50, R$ 5.000. Para IA, usar a fórmula: minutos de áudio × preço/minuto + páginas × preço/página + tokens de entrada/saída × tarifas + armazenamento. Habilitar limite rígido e aviso por clínica antes do consumo.</p>
+<p><strong>Custo anual do piloto</strong>, somente cloud com reserva e manutenção da faixa acima: R$ 87.396–260.304. Exclui desenvolvimento, mensagens, IA, jurídico, testes externos, licenças adicionais e tributos. Não confundir custo da infraestrutura com custo total de manter um SaaS.</p>
+<p>FinOps: medir custo por clínica e por capacidade; alertas a 50%, 80% e 100% do orçamento; expiração de exportações; limites de upload; retenção de logs; verificação mensal de recursos ociosos. Não usar bloqueio financeiro para impedir exportação e guarda legal de dados.</p>
+<h2 id="20-testes-entrega-e-criterios-de-liberacao">20. Testes, entrega e critérios de liberação</h2>
+<h3 id="201-estrategia-de-qualidade">20.1 Estratégia de qualidade</h3>
+<ul>
+<li>Testes unitários para regras de agenda, retorno, versões, cálculos, estoque e estados.</li>
+<li>Integração com PostgreSQL real para RLS, chaves compostas, transações e concorrência; mocks não demonstram isolamento do banco.</li>
+<li>Testes ponta a ponta das jornadas críticas em desktop, tablet e smartphone, incluindo Safari/iOS e Chrome/Android.</li>
+<li>Contratos e reentrega de webhooks, falha de provedor, repetição de jobs e expiração de links.</li>
+<li>Validação manual de acessibilidade, uso em rede lenta, sessão expirada e interrupção durante salvamento.</li>
+<li>Testes de segurança independentes antes da abertura comercial, mais restauração e carga no perfil declarado.</li>
+</ul>
+<h3 id="202-pipeline-e-reversao">20.2 Pipeline e reversão</h3>
+<p>Pull request → revisão → análise estática e dependências → testes → build de imagem → homologação → smoke tests → aprovação de release por responsável → produção gradual → observação. Alterações de infraestrutura também passam por revisão. IA de programação pode apoiar desenvolvimento com dados sintéticos e revisão de código, sem receber prontuários reais.</p>
+<p>Migrações seguem expansão/contração: adicionar estrutura compatível, migrar dados, trocar leitura/escrita e remover somente em release posterior. O rollback da aplicação deve continuar compatível com o banco; não presumir que toda migração tem reversão destrutiva segura. Mudanças arriscadas usam feature flags e backup verificado.</p>
+<h3 id="203-definition-of-done">20.3 Definition of Done</h3>
+<p>História aceita pelo produto, fluxo validado, permissões testadas, isolamento preservado, observabilidade disponível, documentação atualizada e migração/rollback preparados quando necessários. Não liberar falha crítica explorável, vazamento entre clínicas, corrupção de histórico ou incapacidade de restaurar dados. Achados menores exigem responsável e prazo registrados.</p>
+<p>Portões de liberação: F2 exige teste de concorrência e controles administrativos; F3 exige aprovação documental/clínica e exportação; F4 exige proteção de mídia; F5/F6 exigem reconciliação; F7 exige falhas de integração testadas; F8 exige avaliação específica e governança de dados/modelos.</p>
+<h2 id="21-importacao-portabilidade-e-saida-do-servico">21. Importação, portabilidade e saída do serviço</h2>
+<p>Importação inicial por CSV com mapeamento, prévia, relatório de rejeição e identificador de lote. Fazer ensaio com dados sintéticos, backup antes do lote real e conciliação de contagens. Prontuários de sistemas antigos exigem mapeamento específico; ausência de autoria/data deve ficar explícita, sem criar assinatura retroativa.</p>
+<p>Exportação por paciente e por organização, conforme permissão: documento legível e pacote estruturado CSV/JSON com anexos, versões, autores e manifesto/checksums. Registrar quem solicitou e baixou. Exportações volumosas são assíncronas, cifradas e temporárias; expiração proposta de 24 horas após geração, configurável.</p>
+<p>Na saída de uma clínica, executar exportação conferida, plano de guarda/transferência e encerramento de acessos. A política de eliminação respeita obrigações, litígios e contratos. Testar restauração por tenant em ambiente isolado: um backup compartilhado não permite devolver dados de outras clínicas.</p>
+<h2 id="22-indicadores-de-sucesso-e-riscos">22. Indicadores de sucesso e riscos</h2>
+<h3 id="221-indicadores-de-produto">22.1 Indicadores de produto</h3>
+<p>Medir linha de base no piloto e depois estabelecer metas finais. Hipóteses iniciais: cadastro simples em até 2 minutos; 90% dos atendimentos elegíveis com retorno registrado quando indicado; redução de 20% no tempo administrativo em 60 dias; diminuição de faltas após lembretes. Esses são objetivos a testar, não resultados prometidos.</p>
+<p>Definir métricas com denominadores claros: faltas/horários não cancelados; retornos agendados/tarefas de retorno elegíveis; registros finalizados/atendimentos concluídos; horas de operação e incidentes. Evitar usar conclusão de procedimento como indicador automático de qualidade clínica.</p>
+<h3 id="222-riscos-principais">22.2 Riscos principais</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Risco</th>
+<th>Mitigação</th>
+<th>Responsável proposto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Escopo cresce antes da validação</td>
+<td>Financiar por fases e manter backlog de descoberta separado</td>
+<td>Produto</td>
+</tr>
+<tr>
+<td>Campos e fluxos inadequados</td>
+<td>Homologação semanal com profissional e recepção</td>
+<td>Produto + clínico</td>
+</tr>
+<tr>
+<td>Vazamento entre organizações</td>
+<td>Defesa em profundidade e testes negativos sistemáticos</td>
+<td>Liderança técnica</td>
+</tr>
+<tr>
+<td>Perda ou adulteração de prontuário</td>
+<td>Imutabilidade, autoria, backups e restore ensaiado</td>
+<td>Técnico + clínico</td>
+</tr>
+<tr>
+<td>Uso de IA com finalidade regulada</td>
+<td>Avaliar finalidade de uso antes do desenvolvimento/comercialização</td>
+<td>Jurídico/regulatório</td>
+</tr>
+<tr>
+<td>Custo de mensagens e arquivos cresce</td>
+<td>Cotas, precificação por uso e alarmes</td>
+<td>Produto + operação</td>
+</tr>
+<tr>
+<td>Integração indisponível</td>
+<td>Fila, repetição segura e operação manual documentada</td>
+<td>Técnico</td>
+</tr>
+<tr>
+<td>Marca indisponível</td>
+<td>Busca jurídica e de domínio antes de investir na identidade</td>
+<td>Produto</td>
+</tr>
+<tr>
+<td>Equipe sem plantão para SLA</td>
+<td>Adequar SLA, escala e orçamento antes de vender</td>
+<td>Operação</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="23-decisoes-a-validar-na-descoberta">23. Decisões a validar na descoberta</h2>
+<ol>
+<li>O lançamento atende profissionais autônomos, clínicas ou ambos? Há múltiplas unidades desde o início?</li>
+<li>Quais profissões e habilitações estarão no piloto e quem aprova os templates clínicos?</li>
+<li>Quais trechos ilegíveis da transcrição representam necessidades adicionais?</li>
+<li>Qual é o fluxo de assinatura/documentação exigido e qual política de guarda será adotada?</li>
+<li>O sistema substituirá um prontuário existente ou começará por agenda/CRM administrativo?</li>
+<li>Quantos usuários, pacientes, fotos por atendimento e mensagens por mês são esperados?</li>
+<li>Qual orçamento e qual equipe estão disponíveis para F0–F3 e para operação?</li>
+<li>A clínica já possui WhatsApp oficial, provedor de pagamentos e sistema contábil?</li>
+<li>Quais dados precisam ser migrados e em quais formatos existem?</li>
+<li>Qual nível de disponibilidade e atendimento de suporte será vendido?</li>
+</ol>
+<p>Essas decisões não impedem o desenho proposto, mas podem alterar esforço, contratos e portões de liberação. Registrar mudanças em nova versão do SDD, preservando histórico das decisões.</p>
+<h2 id="24-plano-de-inicio-e-entregaveis-de-f0">24. Plano de início e entregáveis de F0</h2>
+<p><strong>Semana 1:</strong> entrevistar profissional e recepção; validar a transcrição; desenhar cadastro, agenda e retorno; priorizar RF01–RF04; mapear dados, papéis e responsabilidades; selecionar fluxo de assinatura para análise.</p>
+<p><strong>Semana 2:</strong> validar protótipo em celular/tablet/PC; implementar fundação em homologação com dados sintéticos; testar isolamento e restore; registrar versões de ferramentas; produzir cotação regional da cloud; converter F1/F2 em histórias com critérios de aceite.</p>
+<p>Ao concluir F0, devem existir: backlog ordenado, protótipo navegável, matriz de acesso, mapa de dados, ADRs, diagrama de implantação, pipeline funcional, evidência de backup/restore, orçamento revisado e responsável definido para cada risco. O desenvolvimento segue por pequenas entregas demonstráveis e aprovações de produto em cada fase.</p>
+<h2 id="25-referencias-e-natureza-das-estimativas">25. Referências e natureza das estimativas</h2>
+<p>Fontes consultadas em 05/10/2026 e vinculadas às seções correspondentes: legislação LGPD; Lei 13.787/2018; orientações ANPD de incidentes e transferências; material Anvisa sobre SaMD; PostgreSQL RLS; Next.js; NestJS; OWASP ASVS; WCAG 2.2; páginas de preços AWS e WhatsApp Business.</p>
+<p>A arquitetura, o cronograma, as metas, as faixas de orçamento, a paleta e os conceitos de marca são propostas deste SDD. A classificação regulatória, a adequação documental, as tarifas regionais, a disponibilidade do nome e os resultados de desempenho dependem de validação antes de contratação ou lançamento. Este documento não afirma certificação, registro de marca, disponibilidade de domínio ou homologação clínica já obtidos.</p></main></div><footer class="footer">Verdia · Nome e marca provisórios · SDD v1.0 · 5 de outubro de 2026</footer></body></html>

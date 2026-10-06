@@ -1,0 +1,370 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Verdia — MVP gratuito e seguro</title><meta name="description" content="Plano enxuto de MVP: ferramentas gratuitas, segurança, fases, custos e critérios de liberação."><style>
+:root{--forest:#145C45;--dark:#0B3D2E;--mint:#EAF4EE;--ink:#1F2933;--line:#d9e4dd}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:#f0f4f1;color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--forest);text-underline-offset:3px}a:focus-visible,button:focus-visible{outline:3px solid #8A4B08;outline-offset:4px}
+.hero{background:var(--dark);color:white;padding:64px max(6vw,24px) 48px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:350px;height:350px;border:70px solid #ffffff09;border-radius:50%;right:-70px;top:-120px;pointer-events:none}
+.eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:#bed9ca;font-weight:700}.hero h1{font-size:clamp(42px,7vw,78px);line-height:1.02;letter-spacing:-.055em;margin:18px 0}.hero .lede{font-size:21px;max-width:820px;color:#e5f0e9;line-height:1.5}.meta{font-size:13px;color:#c3d9cc;margin-top:26px}.hero-bar{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}.pill{border:1px solid #8aa999;padding:7px 13px;border-radius:30px;font-size:13px}
+.layout{max-width:1540px;margin:0 auto;display:grid;grid-template-columns:290px minmax(0,1fr);gap:36px;padding:38px 30px 70px}aside{position:sticky;top:22px;align-self:start;max-height:calc(100vh - 44px);overflow:auto;padding:0 12px 20px 0;font-size:13px;line-height:1.5}aside h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 16px}aside ul{list-style:none;padding:0;margin:0}aside li{margin:0 0 10px}aside a{text-decoration:none;color:#405a4c}aside a:hover{color:var(--forest);text-decoration:underline}
+main{background:white;border:1px solid var(--line);border-radius:14px;padding:42px clamp(22px,4vw,64px);min-width:0;box-shadow:0 10px 40px #163e2110}main>p:first-child{margin-top:0}h2{font-size:28px;line-height:1.25;letter-spacing:-.025em;color:var(--dark);margin:60px 0 22px;padding-top:24px;border-top:2px solid var(--line)}h3{font-size:20px;color:var(--forest);line-height:1.4;margin:30px 0 12px}p{margin:0 0 17px}li{margin:8px 0}strong{color:var(--dark)}code{font: .89em ui-monospace,Consolas,monospace;background:#f0f5f2;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}pre{overflow:auto;padding:18px;background:#f0f5f2}pre code{padding:0;background:none}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.55}th{background:var(--mint);text-align:left;color:var(--dark);font-weight:700}td,th{border-bottom:1px solid var(--line);padding:12px 13px;vertical-align:top}tr:nth-child(even) td{background:#fafcfb}.table-scroll{overflow-x:auto;margin:18px 0 26px}.table-scroll table{min-width:560px}blockquote{border-left:4px solid var(--forest);margin:24px 0;padding:8px 20px;background:var(--mint)}
+.logo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:26px 0}.logo-grid figure{margin:0}.logo-grid svg{width:100%;height:auto}.logo-grid figcaption{font-size:12px;color:#486153;text-align:center;padding-top:7px}.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:25px 0 36px}.swatches span{height:54px;display:block;border-radius:8px;border:1px solid #d9e4dd}.swatches b{font-size:12px;display:block;margin-top:6px}.swatches code{font-size:10px;background:none;padding:0}
+.architecture{background:#f4f8f5;padding:24px;border:1px solid var(--line);border-radius:12px;margin:24px 0;break-inside:avoid}.arch-row{display:flex;justify-content:center;gap:12px}.arch-box{text-align:center;flex:1;max-width:550px;padding:14px 12px;border:1px solid #afc9ba;background:white;border-radius:9px;font-weight:700;color:var(--dark);line-height:1.35}.arch-box small{display:block;font-size:12px;font-weight:400;margin-top:6px}.arch-box.core{background:var(--forest);color:white;max-width:none}.arrow{text-align:center;color:var(--forest);font-size:24px;line-height:1.4}.arch-footer{text-align:center;border-top:1px solid var(--line);margin-top:22px;padding-top:16px;font-size:12px;color:#405a4c}
+.print-button{display:inline-block;background:#fff;color:var(--dark);border:0;border-radius:6px;padding:10px 16px;font:600 13px system-ui;cursor:pointer;margin-top:22px}.footer{text-align:center;padding:0 20px 40px;color:#506859;font-size:12px}
+@media(max-width:1050px){.layout{grid-template-columns:220px minmax(0,1fr);gap:20px;padding:24px 18px}.logo-grid{grid-template-columns:1fr}.logo-grid svg{max-height:210px}.swatches{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.layout{display:block;padding:18px 12px}aside{position:static;max-height:240px;background:#e4ede6;padding:18px;margin-bottom:18px;border-radius:10px}main{padding:24px 20px}h2{font-size:25px;margin-top:44px}.hero{padding:38px 24px}.hero .lede{font-size:18px}.arch-row{flex-wrap:wrap}.arch-box{flex-basis:100%}.logo-grid{grid-template-columns:1fr}.table-scroll table{min-width:520px}}
+@media print{@page{size:A4;margin:17mm 16mm}body{background:white;font-size:10pt;line-height:1.5}.hero{padding:24mm 9mm;background:white;color:var(--dark);border-bottom:3px solid var(--forest);break-after:page}.hero:after{display:none}.hero h1{font-size:58pt}.hero .lede,.meta,.eyebrow{color:var(--dark)}.pill{border-color:var(--forest)}aside,.print-button,.footer{display:none}.layout{display:block;padding:0}main{border:0;border-radius:0;box-shadow:none;padding:0}h2{font-size:19pt;break-after:avoid;margin-top:22pt;padding-top:12pt}h3{font-size:13pt;break-after:avoid}p,li{orphans:3;widows:3}.table-scroll{overflow:visible}.table-scroll table{min-width:0;font-size:8.2pt}thead{display:table-header-group}tr{break-inside:avoid}td,th{padding:7pt}.logo-grid{grid-template-columns:repeat(3,1fr);break-inside:avoid}.swatches{grid-template-columns:repeat(6,1fr)}a{color:var(--forest);overflow-wrap:anywhere}.architecture{padding:12pt}.arch-box{font-size:10pt}.arch-box small{font-size:8pt}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+.current-plan{background:#EAF4EE;border:1px solid #A8C5B5;border-left:5px solid #145C45;border-radius:8px;padding:18px 22px;margin-bottom:30px}.current-plan strong{display:block;margin-bottom:5px}.doc-links{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.doc-links a{display:inline-block;background:#EAF4EE;border:1px solid #A8C5B5;padding:9px 13px;border-radius:7px;text-decoration:none}.hero .lede a{color:inherit}</style></head><body><header class="hero"><div class="eyebrow">Plano vigente · MVP · v1.1</div><h1>Começar pequeno.<br>Cuidar dos dados.</h1><p class="lede">Verdia com ferramentas gratuitas: cadastro, agenda,<br>retornos e prontuário básico em entregas curtas.</p><div class="hero-bar"><span class="pill">Cloudflare + Supabase</span><span class="pill">R$ 0 em cloud para demonstração</span><span class="pill">MFA · Permissões · Backup</span></div><p class="meta">05 OUT 2026 / ESTIMATIVA DE 6–8 SEMANAS / DADOS FICTÍCIOS PRIMEIRO</p><button class="print-button" onclick="window.print()">Imprimir / salvar como PDF</button></header><div class="layout"><aside aria-label="Sumário"><h2>Plano do MVP</h2><div class="toc">
+<ul>
+<li><a href="#1-recomendacao">1. Recomendação</a></li>
+<li><a href="#2-escopo-enxuto">2. Escopo enxuto</a></li>
+<li><a href="#3-ferramentas-e-custo">3. Ferramentas e custo</a></li>
+<li><a href="#4-arquitetura-do-mvp">4. Arquitetura do MVP</a></li>
+<li><a href="#5-seguranca-que-permanece-obrigatoria">5. Segurança que permanece obrigatória</a></li>
+<li><a href="#6-o-que-o-gratuito-nao-entrega">6. O que o gratuito não entrega</a></li>
+<li><a href="#7-fases-e-pequenas-entregas">7. Fases e pequenas entregas</a></li>
+<li><a href="#8-custos-e-quando-pagar">8. Custos e quando pagar</a></li>
+<li><a href="#9-criterios-para-dados-reais">9. Critérios para dados reais</a></li>
+<li><a href="#10-o-que-foi-adiado-para-economizar">10. O que foi adiado para economizar</a></li>
+<li><a href="#11-publicacao-do-documento-no-github">11. Publicação do documento no GitHub</a></li>
+<li><a href="#12-decisao-de-partida">12. Decisão de partida</a></li>
+</ul>
+</div>
+</aside><main><div class="current-plan"><strong>Esta é a arquitetura de partida.</strong>O SDD ampliado permanece como referência de evolução. Seus custos AWS e escopo completo não são requisitos para o MVP gratuito.</div><div class="doc-links"><a href="sdd-completo.html">Consultar SDD completo e marcas</a><a href="MVP-Gratuito-Verdia.md">Fonte editável do MVP</a></div>
+<p><strong>Plano de implementação · Versão 1.1 · 5 de outubro de 2026</strong></p>
+<p>Esta é a proposta vigente para começar o Verdia com baixo custo. Ela substitui, para o MVP, a infraestrutura AWS e o orçamento de equipe do SDD original. O SDD completo continua como referência de funcionalidades, regras clínicas e evolução; sua infraestrutura ampliada não é pré-requisito para este plano.</p>
+<h2 id="1-recomendacao">1. Recomendação</h2>
+<p>Construir um MVP pequeno com <strong>React + TypeScript, Cloudflare Pages/Functions e Supabase Free</strong>, mantendo autenticação forte, permissões, separação entre clínicas e histórico de alterações. Publicar a documentação estática no <strong>GitHub Pages</strong>, em repositório separado do futuro aplicativo.</p>
+<p><strong>Custo de infraestrutura da demonstração: R$ 0/mês, dentro das franquias</strong>, usando subdomínios gratuitos e dados fictícios. Trabalho de desenvolvimento, operação, computador, internet e eventuais serviços externos não se tornam gratuitos por causa disso.</p>
+<p>É possível preservar bons controles de confidencialidade e integridade no plano gratuito. A maior concessão é de disponibilidade e recuperação: o Supabase Free pode pausar por inatividade e não inclui backup automático. Portanto, usar primeiro em demonstração e homologação. Um piloto administrativo com dados reais exige os controles e o aceite de risco descritos adiante; para prontuário clínico como fonte principal, a recomendação é migrar para banco com backup gerenciado e manter cópia independente.</p>
+<p><strong>Primeira entrega:</strong> pacientes, agenda e retornos. <strong>Segunda entrega:</strong> anamnese e evolução simples, inicialmente com dados fictícios. Fotos clínicas, IA, estoque, financeiro completo, WhatsApp automático e aplicativo nativo ficam fora do MVP gratuito.</p>
+<h2 id="2-escopo-enxuto">2. Escopo enxuto</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Entra no MVP</th>
+<th>Definição de pronto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acesso por convite</td>
+<td>Usuário autorizado, segundo fator TOTP e vínculo à clínica</td>
+</tr>
+<tr>
+<td>Cadastro de pacientes</td>
+<td>Nome, nascimento quando necessário, contato, responsável e preferências; CPF opcional</td>
+</tr>
+<tr>
+<td>Agenda</td>
+<td>Profissional, início/fim, bloqueio, cancelamento, falta e reagendamento</td>
+</tr>
+<tr>
+<td>Retornos</td>
+<td>Data/prazo definido pelo profissional, responsável e lista de pendências</td>
+</tr>
+<tr>
+<td>Anamnese básica</td>
+<td>Um template revisado, versionado e com campos essenciais</td>
+</tr>
+<tr>
+<td>Evolução</td>
+<td>Rascunho, finalização explícita e adendo; sem edição silenciosa do finalizado</td>
+</tr>
+<tr>
+<td>Exportação</td>
+<td>Pacientes em CSV e prontuário em formato legível, com autoria e datas</td>
+</tr>
+<tr>
+<td>Auditoria</td>
+<td>Alterações e leituras clínicas registradas no servidor</td>
+</tr>
+<tr>
+<td>Backup/restore</td>
+<td>Cópia cifrada fora do projeto e restauração demonstrada</td>
+</tr>
+</tbody>
+</table></div>
+<p>Começar com <strong>uma clínica, até cinco usuários e até mil pacientes</strong>, como limite operacional proposto, não como garantia de capacidade do fornecedor. Testar isolamento com uma segunda clínica fictícia desde o início, para evitar uma migração insegura quando o produto crescer.</p>
+<p>Recepção vê cadastro, agenda e tarefas; profissional vê conteúdo clínico autorizado. Gestor administrativo não recebe acesso clínico automaticamente. Não disponibilizar cadastro público ou portal do paciente nesta primeira versão.</p>
+<h2 id="3-ferramentas-e-custo">3. Ferramentas e custo</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Escolha</th>
+<th>Custo inicial e limitação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interface responsiva</td>
+<td>React, TypeScript e Vite</td>
+<td>Sem licença paga; componentes acessíveis e CSS próprio</td>
+</tr>
+<tr>
+<td>Hospedagem da interface</td>
+<td>Cloudflare Pages Free</td>
+<td>R$ 0 dentro das franquias; subdomínio pages.dev</td>
+</tr>
+<tr>
+<td>API/BFF pequeno</td>
+<td>Pages Functions, runtime Workers</td>
+<td>Franquia gratuita; funções devem ser curtas e medidas</td>
+</tr>
+<tr>
+<td>Banco</td>
+<td>Supabase Free / PostgreSQL</td>
+<td>500 MB de banco por projeto; monitorar crescimento</td>
+</tr>
+<tr>
+<td>Autenticação</td>
+<td>Supabase Auth + TOTP</td>
+<td>Segundo fator por aplicativo, sem dependência de SMS</td>
+</tr>
+<tr>
+<td>Arquivos</td>
+<td>Adiados no MVP</td>
+<td>Evita custo, varredura e complexidade de fotos/prontuários anexados</td>
+</tr>
+<tr>
+<td>Código do aplicativo</td>
+<td>GitHub, repositório privado</td>
+<td>Plano gratuito; segredos fora do código</td>
+</tr>
+<tr>
+<td>Documento compartilhável</td>
+<td>GitHub Pages, repositório público de documentação</td>
+<td>Publicação estática gratuita nas condições do GitHub Free</td>
+</tr>
+<tr>
+<td>Testes</td>
+<td>Vitest, Playwright, axe-core e pgTAP</td>
+<td>Execução local gratuita; CI sujeito à franquia</td>
+</tr>
+<tr>
+<td>Design e planejamento</td>
+<td>Penpot ou Figma Free; GitHub Issues</td>
+<td>Usar recursos gratuitos; verificar limites do plano escolhido</td>
+</tr>
+<tr>
+<td>Backup</td>
+<td>pg_dump/Supabase CLI + age ou ferramenta equivalente</td>
+<td>Ferramentas gratuitas; exige destino cifrado, agenda e responsável</td>
+</tr>
+<tr>
+<td>E-mail de conta</td>
+<td>SMTP externo gratuito, quando configurado</td>
+<td>Domínio verificado e franquia do provedor podem limitar custo zero</td>
+</tr>
+</tbody>
+</table></div>
+<p>O plano Supabase Free consultado informa também 1 GB de arquivos, duas instâncias ativas e pausa após uma semana sem atividade. Pro parte de US$ 25/mês e inclui backups diários de banco com sete dias de retenção; recuperação pontual tem cobrança separada. Esses recursos não substituem governança nem backup dos objetos. <a href="https://supabase.com/pricing">Supabase — preços</a>.</p>
+<p>Cloudflare Pages Free permite 500 builds por mês. Functions consome a franquia de Workers: 100 mil requisições/dia e limite de CPU de 10 ms por requisição no plano gratuito. Isso exige medir autenticação, validação e exportações: exceder CPU pode interromper a função mesmo com poucas visitas. <a href="https://developers.cloudflare.com/pages/platform/limits/">Pages — limites</a>, <a href="https://developers.cloudflare.com/workers/platform/limits/">Workers — limites</a>.</p>
+<h2 id="4-arquitetura-do-mvp">4. Arquitetura do MVP</h2>
+<pre><code class="language-text">Celular / tablet / PC
+         │ HTTPS
+         ▼
+Cloudflare Pages: React estático
+         │ /api, mesma origem
+         ▼
+Pages Functions: autenticação, autorização e validação
+         │ token do usuário; operações curtas
+         ▼
+Supabase: Auth + PostgreSQL + RLS + funções SQL transacionais
+         │
+         └── exportação de backup → cópia cifrada independente
+
+GitHub Pages → apenas documentação pública, sem login de pacientes
+</code></pre>
+<p>O backend é pequeno e organizado por módulos: acesso, pacientes, agenda, retornos e prontuário. O PostgreSQL concentra as transações de agenda, finalização e adendos. Não implantar ECS, Kubernetes, Redis, fila dedicada, servidor NestJS ou banco vetorial nesta etapa.</p>
+<p>Escolher São Paulo para o projeto Supabase quando disponível no provisionamento. Cloudflare e serviços auxiliares podem processar dados fora do Brasil; mapear contratos e transferências antes do uso real. Não afirmar residência exclusivamente brasileira de ponta a ponta. <a href="https://supabase.com/docs/guides/platform/regions">Supabase — regiões</a>.</p>
+<p><strong>Sessão:</strong> BFF mantém tokens fora do JavaScript do navegador, em cookies HttpOnly, Secure e SameSite, protegidos contra adulteração; usar proteção CSRF e checagem de origem. Não persistir prontuário ou tokens em localStorage. Renovação ocorre no servidor. Não assumir que o SDK padrão já implementa exatamente essa estratégia: testar login, refresh concorrente, expiração, logout e recuperação como parte da primeira fase.</p>
+<p><strong>Permissões:</strong> chamadas normais ao Supabase usam o token do usuário e RLS. Não usar service_role como atalho geral: ela ignora RLS. Chaves administrativas ficam apenas em funções administrativas restritas, com segredos de ambiente e escopo mínimo. Testar o acesso direto à API do Supabase, pois esconder uma rota no frontend não protege o banco. <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">Supabase — RLS</a>.</p>
+<p><strong>Modelo mínimo:</strong> Organization, Membership, Patient, Professional, Appointment, ReturnTask, FormTemplateVersion, Encounter, ClinicalEntry, Addendum, AuditEvent e SessionRevocation. Todas as tabelas clínicas têm tenant_id e referências que não aceitam relações entre clínicas.</p>
+<p>Para leitura clínica auditada, não permitir SELECT direto nas tabelas-base pelos papéis cliente. Expor uma operação SQL restrita que valida usuário, vínculo ativo, MFA e acesso ao paciente, registra a leitura e retorna apenas os campos autorizados. Se SECURITY DEFINER for necessário, usar proprietário sem BYPASSRLS, FORCE RLS quando aplicável, search_path fixo, autorização explícita e testes negativos; revogar execução pública. RLS sozinha não produz auditoria de SELECT. Views e funções devem ser revisadas, não apenas tabelas.</p>
+<h2 id="5-seguranca-que-permanece-obrigatoria">5. Segurança que permanece obrigatória</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Controle</th>
+<th>Implementação mínima</th>
+<th>Teste de aceite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Segundo fator</td>
+<td>TOTP obrigatório para equipe; exigir nível aal2 na autorização</td>
+<td>Senha correta sem MFA não abre dados assistenciais</td>
+</tr>
+<tr>
+<td>Isolamento</td>
+<td>tenant_id, RLS e vínculo ativo no banco</td>
+<td>Usuário da clínica A não lê/altera nenhum recurso da B</td>
+</tr>
+<tr>
+<td>Recepção segregada</td>
+<td>Papéis e rotas/consultas com campos mínimos</td>
+<td>Recepção recebe negação para anamnese e evolução</td>
+</tr>
+<tr>
+<td>Sessões revogáveis</td>
+<td>Verificação de vínculo e revogação da sessão no servidor/banco</td>
+<td>Remover usuário ou revogar sessão bloqueia uso, inclusive com token ainda válido</td>
+</tr>
+<tr>
+<td>Agenda consistente</td>
+<td>Constraint de intervalo e transação</td>
+<td>Duas reservas simultâneas não ocupam o mesmo recurso</td>
+</tr>
+<tr>
+<td>Histórico íntegro</td>
+<td>Finalização imutável e adendo</td>
+<td>UPDATE direto no registro finalizado falha</td>
+</tr>
+<tr>
+<td>Auditoria confiável</td>
+<td>Eventos criados pelo servidor; sem UPDATE/DELETE pelo usuário</td>
+<td>Ator não consegue falsificar autoria nem remover eventos</td>
+</tr>
+<tr>
+<td>Conteúdo seguro</td>
+<td>CSP, sem HTML arbitrário, dependências revisadas e limites de entrada</td>
+<td>Texto malicioso não executa script</td>
+</tr>
+<tr>
+<td>Segredos</td>
+<td>Apenas variáveis protegidas; nenhum segredo no build/README</td>
+<td>Varredura do repositório e artefato publicado</td>
+</tr>
+<tr>
+<td>Privacidade</td>
+<td>Sem replay de sessão, analytics clínico ou payloads sensíveis em logs</td>
+<td>Inspeção de logs e erros</td>
+</tr>
+<tr>
+<td>Backups</td>
+<td>Cifrados, independentes e com recuperação ensaiada</td>
+<td>Recuperar conjunto de teste e reconciliar registros</td>
+</tr>
+</tbody>
+</table></div>
+<p>A configuração de MFA exige interface de inscrição, desafio e recuperação; não basta habilitar a opção no painel. O backend e as políticas devem exigir o nível correto. <a href="https://supabase.com/docs/guides/auth/auth-mfa">Supabase — MFA</a>.</p>
+<p>Não compartilhar logins, não tornar buckets públicos e não desativar RLS para resolver erros. Bloquear acesso anônimo e autoinscrição. Não confiar em tenant_id ou papéis editáveis enviados pelo cliente. Aplicar cabeçalhos no-cache às respostas privadas, CORS restrito e limites de tentativas. Proteções contra abuso também devem ser verificadas nos endpoints públicos de autenticação do fornecedor.</p>
+<p>MFA no GitHub, Cloudflare e Supabase para os administradores. Um repositório privado ajuda a restringir exposição do projeto, mas não substitui a proteção de credenciais e dados.</p>
+<h2 id="6-o-que-o-gratuito-nao-entrega">6. O que o gratuito não entrega</h2>
+<h3 id="disponibilidade">Disponibilidade</h3>
+<p>Não vender SLA ou atendimento 24×7 nesta fase. A pausa por inatividade é uma condição do plano, não um problema a contornar com acessos artificiais. Registrar um procedimento de retomada e um fluxo manual de contingência. <a href="https://supabase.com/docs/guides/platform/free-project-pausing">Supabase — pausa de projetos</a>.</p>
+<h3 id="recuperacao">Recuperação</h3>
+<p>O free não inclui backup automático gerenciado. Criar exportação lógica diária e antes de migrações; manter sete versões diárias e quatro semanais como política inicial, sujeita à governança de retenção. Criptografar antes de enviar para destino privado independente e manter chave de recuperação separada. O GitHub, mesmo privado, não é destino para dumps de pacientes.</p>
+<p>O backup deve abranger esquemas, dados, políticas e funções, além de procedimento documentado para identidades/Auth, associações, configurações e segredos. Um dump parcial de tabelas do app não equivale à restauração integral. Executar restore em projeto de teste, conferindo usuários, vínculos e histórico; não duplicar tokens/sessões de produção.</p>
+<p>Meta proposta para piloto: RPO de até 24 horas e RTO de até um dia útil, apenas depois de demonstrados. Uma tarefa em computador desligado falha: se não houver executor confiável e responsável verificando resultado diariamente, o gate de dados reais não passa. O custo de armazenamento/executor deve ser incluído se não houver recurso existente adequado. A documentação oficial recomenda exportações externas para o plano gratuito. <a href="https://supabase.com/docs/guides/platform/backups">Supabase — backups</a>.</p>
+<h3 id="mensagens-e-login">Mensagens e login</h3>
+<p>O SMTP padrão do Supabase é destinado a testes, tem restrição de destinatários e não deve ser base para convites e recuperação em produção. Configurar SMTP externo e testar entrega, limites, domínio e recuperação. Não desabilitar confirmação/recuperação para economizar. <a href="https://supabase.com/docs/guides/auth/auth-smtp">Supabase — SMTP</a>.</p>
+<p>Se não houver domínio/provedor adequado, manter demonstração com contas de teste permitidas; a fase com usuários reais depende dessa configuração. Um domínio próprio pode ser o primeiro custo anual. Lembretes do MVP são tarefas dentro do sistema e contato manual da clínica, sem bot não oficial de WhatsApp.</p>
+<h2 id="7-fases-e-pequenas-entregas">7. Fases e pequenas entregas</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Fase</th>
+<th>Prazo estimado</th>
+<th>Entrega</th>
+<th>Aceite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M0 — Fundação</td>
+<td>Semana 1</td>
+<td>Projetos, dados fictícios, MFA, papéis, tenant e backup inicial</td>
+<td>Testes de isolamento e restore mínimo passam</td>
+</tr>
+<tr>
+<td>M1 — Pacientes</td>
+<td>Semana 2</td>
+<td>Cadastro, busca, responsáveis e preferências</td>
+<td>Recepção usa sem acessar campos clínicos</td>
+</tr>
+<tr>
+<td>M2 — Agenda</td>
+<td>Semanas 3–4</td>
+<td>Reserva, bloqueio, cancelamento e falta</td>
+<td>Concorrência não duplica horário; histórico preservado</td>
+</tr>
+<tr>
+<td>M3 — Retornos</td>
+<td>Semana 5</td>
+<td>Lista por prazo, responsável e status</td>
+<td>Reagendamento/cancelamento mantém tarefas coerentes</td>
+</tr>
+<tr>
+<td>M4 — Prontuário básico</td>
+<td>Semanas 6–7</td>
+<td>Template, atendimento, rascunho, finalização e adendo</td>
+<td>Finalizado não muda; profissional revisa o modelo</td>
+</tr>
+<tr>
+<td>M5 — Liberação</td>
+<td>Semana 8</td>
+<td>Exportação, restore completo, revisão de segurança e treinamento</td>
+<td>Checklist de liberação aprovado; plano de contingência testado</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Calendário de referência: 6–8 semanas com um desenvolvedor experiente dedicado</strong>, apoio clínico semanal e escopo estável. Estimativa própria: 240–360 horas técnicas totais; dedicação parcial ou aprendizado da stack aumenta o calendário. Não é compromisso de entrega. O cronograma depende especialmente do BFF/autenticação e da revisão clínica.</p>
+<p>Piloto administrativo pode começar após M3 e aprovação dos controles correspondentes. M4 começa com dados fictícios. A agenda e o cadastro já envolvem dados pessoais reais; “administrativo” não significa ausência de obrigações de privacidade.</p>
+<p>Para cada fase, demonstrar uma jornada funcionando em celular, tablet e PC. Limitar opções: um template inicial, uma unidade, cinco usuários e sem importação de acervo clínico legado.</p>
+<h2 id="8-custos-e-quando-pagar">8. Custos e quando pagar</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Cenário</th>
+<th>Infraestrutura prevista</th>
+<th>Condição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Documento online</td>
+<td>R$ 0/mês no GitHub Pages</td>
+<td>Repositório público apenas com documentação</td>
+</tr>
+<tr>
+<td>Demonstração do MVP</td>
+<td>R$ 0/mês em cloud</td>
+<td>Franquias respeitadas, dados fictícios, subdomínios gratuitos</td>
+</tr>
+<tr>
+<td>Piloto administrativo gratuito</td>
+<td>Pode permanecer em R$ 0/mês de planos cloud</td>
+<td>Backup independente, SMTP/domínio já disponíveis e risco operacional aceito</td>
+</tr>
+<tr>
+<td>Pequena produção recomendada</td>
+<td>Supabase Pro a partir de US$ 25/mês + extras necessários</td>
+<td>Backup gerenciado, sem pausa do Free; ainda sem prometer SLA empresarial</td>
+</tr>
+<tr>
+<td>CPU/API excede plano gratuito</td>
+<td>Cotar plano pago do runtime</td>
+<td>Não remover verificação/autorização para caber no limite</td>
+</tr>
+</tbody>
+</table></div>
+<p>US$ 25 equivalem a R$ 137,50 no cenário hipotético de R$ 5,50 por dólar, antes de tributos/extras. Não é cotação cambial. O plano base não inclui automaticamente PITR, armazenamento externo, domínio, mensageria ou suporte operacional.</p>
+<p>Para desenvolvimento próprio, o desembolso com licença pode ser zero, mas há 240–360 horas de trabalho estimado. Se terceirizado à mesma hipótese de R$ 140–220/h do SDD, equivale a <strong>R$ 33.600–79.200</strong>, antes de reserva, revisão independente e operação. Ferramentas gratuitas reduzem a conta cloud; reduzir escopo é o que mais reduz o custo de desenvolvimento.</p>
+<p>Gatilhos propostos: revisar plano aos 70% da franquia e migrar antes de chegar a 85%; falha de backup exige correção imediata; necessidade de disponibilidade diária ou prontuário como fonte única exige rever o plano; qualquer falha repetida de CPU requer ajuste/upgrade. Monitorar tamanho do banco, saída de dados, quantidade de chamadas, CPU, erros e resultado das cópias. Definir responsável semanal.</p>
+<h2 id="9-criterios-para-dados-reais">9. Critérios para dados reais</h2>
+<p>Antes de cadastrar pacientes reais, demonstrar: MFA, recuperação de acesso, isolamento entre clínicas, segregação da recepção, proteção do repositório, backup/restauração, autorização de exportação e contingência. Mapear finalidade, hipótese legal, fornecedores, retenção e direitos dos titulares; aprovar os fluxos com responsáveis da clínica.</p>
+<p>Antes do prontuário clínico real: validar modelo de anamnese, autoria/finalização, assinatura adequada ao fluxo, guarda, exportação completa, leitura auditada e retificação. Recomenda-se backup gerenciado mais cópia independente. Não declarar conformidade automática com LGPD, conselho profissional ou requisitos documentais por usar um fornecedor conhecido. As obrigações e referências legais estão no SDD completo.</p>
+<p>Revisão humana e controles locais continuam necessários em qualquer plano. Não há obrigação técnica de pagar por toda biblioteca; há requisitos de operação que uma franquia gratuita pode não atender.</p>
+<h2 id="10-o-que-foi-adiado-para-economizar">10. O que foi adiado para economizar</h2>
+<p>Fotos e anexos ficam fora até haver armazenamento, varredura e backup adequados. IA, OCR, voz e interpretação de imagens ficam fora por custo e validação. Financeiro começa posteriormente por contas simples; estoque e rastreio de lotes depois. WhatsApp será via API oficial em fase própria. Nenhuma automação deve substituir revisão clínica.</p>
+<p>O caminho de evolução preferido é ampliar o plano gerenciado e otimizar consultas antes de reconstruir a infraestrutura. Manter migrações SQL, dados exportáveis e adaptadores facilita mudar de fornecedor futuramente. AWS do SDD permanece uma opção de evolução, não um destino obrigatório.</p>
+<h2 id="11-publicacao-do-documento-no-github">11. Publicação do documento no GitHub</h2>
+<p>O repositório de documentação terá uma página inicial com este plano, o SDD visual completo, fontes Markdown e os três estudos de logomarca. Publicação estática, sem analytics, sem formulário, sem banco, sem dados de pacientes e sem credenciais.</p>
+<p>O repositório público de documentação é distinto do futuro repositório privado do aplicativo. Não publicar a pasta inteira de trabalho, dumps, .env, tokens, screenshots privados ou anexos do chat. Remover identificadores internos de conversas da versão compartilhável.</p>
+<p>GitHub Pages hospeda HTML/CSS/JavaScript estáticos. No GitHub Free, a documentação de referência informa disponibilidade para repositórios públicos; repositórios privados dependem do plano. Este uso é para documentação, não para operar o SaaS ou guardar prontuários. <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages">GitHub Pages</a>.</p>
+<p>O endereço final só pode ser informado como publicado depois de criar/usar o repositório correto, enviar os arquivos, habilitar Pages e verificar o HTML servido. Não confundir arquivo salvo localmente com publicação online.</p>
+<h2 id="12-decisao-de-partida">12. Decisão de partida</h2>
+<p>Adotar <strong>Cloudflare + Supabase</strong> para o MVP, com um backend pequeno, segurança desde M0 e escopo administrativo primeiro. Validar gratuitamente com dados fictícios. Liberar piloto limitado somente após testes e responsabilidade operacional definida. Pagar pelo primeiro recurso que faltar para preservar dados e continuidade, em vez de cortar um controle essencial.</p>
+<p>Fontes de planos e limites consultadas em 05/10/2026. Os limites podem mudar. Este documento é um plano, não a implementação do CRM nem uma auditoria de segurança já realizada.</p></main></div><footer class="footer">Verdia · Planejamento, não aplicação clínica · v1.1</footer></body></html>
